@@ -3,8 +3,8 @@
 from .core import LyteCache
 from .exceptions import (
     CacheFullError,
-    LyteCacheError,
     LockTimeout,
+    LyteCacheError,
     SchemaVersionError,
     SerializationError,
 )

@@ -25,7 +25,7 @@ from ._paths import default_path as _resolve_default_path
 from ._schema import DDL, PRAGMAS, SCHEMA_VERSION
 from ._serialize import deserialize, serialize
 from ._sweeper import Sweeper
-from .exceptions import CacheFullError, LyteCacheError, LockTimeout, SchemaVersionError
+from .exceptions import CacheFullError, LockTimeout, LyteCacheError, SchemaVersionError
 
 logger = logging.getLogger("lytecache")
 
