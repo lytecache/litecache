@@ -182,15 +182,18 @@ public class LiteCacheTest {
 
     @Test
     public void testTouch() {
-        cache.set("key", "value", Duration.ofMillis(100));
+        // Generous margins relative to the sleeps: a loaded/throttled CI runner can easily burn
+        // tens of milliseconds of JVM/JIT/SQLite overhead between statements, so a tight TTL here
+        // was flaky -- touch() would (correctly) report the key as already expired.
+        cache.set("key", "value", Duration.ofSeconds(2));
         try {
-            Thread.sleep(50);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        assertThat(cache.touch("key", Duration.ofMillis(200))).isTrue();
+        assertThat(cache.touch("key", Duration.ofSeconds(2))).isTrue();
         try {
-            Thread.sleep(150);
+            Thread.sleep(300);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

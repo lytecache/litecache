@@ -1605,8 +1605,11 @@ public class LiteCache implements AutoCloseable {
                             throw new SchemaVersionException("Database schema version " + version + " is not supported");
                         }
                     } else {
-                        // Insert schema version
-                        String insertVersion = "INSERT INTO meta (k, v) VALUES ('schema_version', '1')";
+                        // INSERT OR IGNORE: another process opening this same fresh file for the
+                        // first time may win this exact race between the SELECT above and this
+                        // INSERT, in which case this becomes a harmless no-op instead of a
+                        // PRIMARY KEY constraint violation.
+                        String insertVersion = "INSERT OR IGNORE INTO meta (k, v) VALUES ('schema_version', '1')";
                         try (Statement insertStmt = conn.createStatement()) {
                             insertStmt.executeUpdate(insertVersion);
                         }
