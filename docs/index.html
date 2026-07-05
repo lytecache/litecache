@@ -5,6 +5,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>Lytecache — Embedded, Redis-like caching for Python &amp; Java</title>
       <meta name="description" content="Redis-like caching with zero infrastructure. One SQLite file, no server, readable from Python and Java alike." />
+      <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%2396591a%22/%3E%3Ctext%20x%3D%2216%22%20y%3D%2223%22%20font-family%3D%22ui-monospace%2CMenlo%2CConsolas%2Cmonospace%22%20font-size%3D%2219%22%20font-weight%3D%22700%22%20fill%3D%22%23fff%22%20text-anchor%3D%22middle%22%3E%CE%BB%3C/text%3E%3C/svg%3E" />
       <style>
          /* ============================= TOKENS ============================= */
          :root{
@@ -348,10 +349,31 @@
                               </div>
                               <div class="snippet-pane" data-install-pane="maven">
                                  <pre><code data-syntax="xml">&lt;dependency&gt;
-                                    &lt;groupId&gt;io.lytecache&lt;/groupId&gt;
-                                    &lt;artifactId&gt;lytecache&lt;/artifactId&gt;
-                                    &lt;version&gt;0.1.0&lt;/version&gt;
-                                  &lt;/dependency&gt;</code></pre>
+  &lt;groupId&gt;io.lytecache&lt;/groupId&gt;
+  &lt;artifactId&gt;lytecache&lt;/artifactId&gt;
+  &lt;version&gt;0.1.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+                              </div>
+                           </div>
+                           <div class="snippet install-snippet lang-group">
+                              <div class="snippet-head">
+                                 <span class="install-label">Then use it</span>
+                                 <button class="copy-btn" data-copy>Copy</button>
+                              </div>
+                              <div class="snippet-pane is-active" data-lang="python">
+                                 <pre><code data-syntax="python">from lytecache import LyteCache
+
+cache = LyteCache()
+cache.set("hits", 0)
+cache.incr("hits")</code></pre>
+                              </div>
+                              <div class="snippet-pane" data-lang="java">
+                                 <pre><code data-syntax="java">import io.lytecache.LyteCache;
+
+try (LyteCache cache = new LyteCache()) {
+    cache.set("hits", 0L);
+    cache.incr("hits");
+}</code></pre>
                               </div>
                            </div>
                         </div>
@@ -401,20 +423,20 @@
                   <div class="snippet-pane is-active" data-lang="python">
                      <pre><code data-syntax="python">from lytecache import LyteCache
 
-                        cache = LyteCache()                     # no path, no setup -- just works
-                        cache.set("user:42", {"name": "Ada"}, ttl=300)
-                        cache.get("user:42")                    # {"name": "Ada"}
-                        cache.incr("hits")                      # 1</code></pre>
+cache = LyteCache()                     # no path, no setup -- just works
+cache.set("user:42", {"name": "Ada"}, ttl=300)
+cache.get("user:42")                    # {"name": "Ada"}
+cache.incr("hits")                      # 1</code></pre>
                   </div>
                   <div class="snippet-pane" data-lang="java">
                      <pre><code data-syntax="java">import io.lytecache.LyteCache;
-                        import java.time.Duration;
+    import java.time.Duration;
 
-                        try (LyteCache cache = new LyteCache()) {
-                            cache.set("user:42", "Ada", Duration.ofMinutes(5));
-                            cache.getString("user:42");          // "Ada"
-                            cache.incr("hits");                  // 1
-                    }</code></pre>
+    try (LyteCache cache = new LyteCache()) {
+        cache.set("user:42", "Ada", Duration.ofMinutes(5));
+        cache.getString("user:42");          // "Ada"
+        cache.incr("hits");                  // 1
+}</code></pre>
                   </div>
                </div>
                <p>Both are context managers: <code>with LyteCache() as cache:</code> in Python, <code>try (LyteCache cache = new LyteCache())</code> in Java. Closing flushes any buffered state and stops the background sweeper cleanly.</p>
@@ -474,28 +496,28 @@
                   </div>
                   <div class="snippet-pane is-active" data-lang="python">
                      <pre><code data-syntax="python">cache.set("session", {"user_id": 42}, ttl=300)   # expires in 300s (5 min)
-                        cache.set("otp", "123456", ttl=0.5)              # expires in 500ms
+cache.set("otp", "123456", ttl=0.5)              # expires in 500ms
 
-                        cache.ttl("session")        # seconds remaining, e.g. 298.7
-                        cache.ttl("permanent_key")  # -1 if no TTL was set
-                        cache.ttl("missing")        # None if the key doesn't exist
+cache.ttl("session")        # seconds remaining, e.g. 298.7
+cache.ttl("permanent_key")  # -1 if no TTL was set
+cache.ttl("missing")        # None if the key doesn't exist
 
-                        cache.expire("session", 60)   # overwrite the TTL: now expires in 60s
-                        cache.persist("session")      # remove the TTL entirely
-                        cache.touch("session", 300)   # sliding expiration: refresh back to 300s
-                      </code></pre>
+cache.expire("session", 60)   # overwrite the TTL: now expires in 60s
+cache.persist("session")      # remove the TTL entirely
+cache.touch("session", 300)   # sliding expiration: refresh back to 300s
+</code></pre>
                   </div>
                   <div class="snippet-pane" data-lang="java">
                      <pre><code data-syntax="java">cache.set("session", "42", Duration.ofMinutes(5));
-                      cache.set("otp", "123456", Duration.ofMillis(500));
+cache.set("otp", "123456", Duration.ofMillis(500));
 
-                      cache.ttl("session");     // Duration remaining
-                      cache.ttl("permanent");   // Duration.ofSeconds(-1) if no TTL
-                      cache.ttl("missing");     // null if the key doesn't exist
+cache.ttl("session");     // Duration remaining
+cache.ttl("permanent");   // Duration.ofSeconds(-1) if no TTL
+cache.ttl("missing");     // null if the key doesn't exist
 
-                      cache.expire("session", Duration.ofSeconds(60));  // overwrite the TTL
-                      cache.persist("session");                          // remove the TTL entirely
-                      cache.touch("session", Duration.ofMinutes(5));     // sliding expiration</code></pre>
+cache.expire("session", Duration.ofSeconds(60));  // overwrite the TTL
+cache.persist("session");                          // remove the TTL entirely
+cache.touch("session", Duration.ofMinutes(5));     // sliding expiration</code></pre>
                   </div>
                </div>
                <h3>Lazy and active expiration</h3>
@@ -519,11 +541,11 @@
                   </div>
                   <div class="snippet-pane is-active" data-lang="python">
                      <pre><code data-syntax="python">cache.delete("key1", "key2")   # delete specific keys; returns how many existed
-                        cache.flush()                  # delete EVERYTHING in the current namespace</code></pre>
+cache.flush()                  # delete EVERYTHING in the current namespace</code></pre>
                   </div>
                   <div class="snippet-pane" data-lang="java">
                      <pre><code data-syntax="java">cache.delete("key1", "key2");   // delete specific keys; returns how many existed
-                        cache.flush();                  // delete EVERYTHING in the current namespace</code></pre>
+cache.flush();                  // delete EVERYTHING in the current namespace</code></pre>
                   </div>
                </div>
                <p><code>flush()</code> takes no key or pattern argument by design — it always clears the entire namespace (the default namespace, unless you configured a different one). To clear a subset, delete by key or by pattern instead:</p>
@@ -537,7 +559,7 @@
                   </div>
                   <div class="snippet-pane is-active" data-lang="python">
                      <pre><code data-syntax="python">for key in list(cache.keys("session:*")):
-                        cache.delete(key)</code></pre>
+cache.delete(key)</code></pre>
                   </div>
                   <div class="snippet-pane" data-lang="java">
                      <pre><code data-syntax="java">cache.keys("session:*").forEach(cache::delete);</code></pre>
@@ -587,28 +609,28 @@
                   </div>
                   <div class="snippet-pane is-active" data-lang="python">
                      <pre><code data-syntax="python">LyteCache(
-                        path=None,             # explicit file path; default: LyteCache.default_path()
-                        namespace="default",   # logical partition within the database file
-                        max_keys=None,         # evict when the namespace exceeds this many keys
-                        max_bytes=None,        # evict when the namespace exceeds this many bytes
-                        eviction="lru",        # "lru" | "ttl" | "random" | "noeviction"
-                        sweep_interval=60.0,   # seconds between maintenance passes; None disables
-                                              # the thread and sweeps opportunistically instead
-                        serializer="auto",     # "auto" | "json" (strict) | "pickle"
-                        strict=False,          # True: raise on internal read errors
-                        allow_pickle=False,    # "auto" mode only: allow reading pickled values
-                    )</code></pre>
+    path=None,             # explicit file path; default: LyteCache.default_path()
+    namespace="default",   # logical partition within the database file
+    max_keys=None,         # evict when the namespace exceeds this many keys
+    max_bytes=None,        # evict when the namespace exceeds this many bytes
+    eviction="lru",        # "lru" | "ttl" | "random" | "noeviction"
+    sweep_interval=60.0,   # seconds between maintenance passes; None disables
+                           # the thread and sweeps opportunistically instead
+    serializer="auto",     # "auto" | "json" (strict) | "pickle"
+    strict=False,          # True: raise on internal read errors
+    allow_pickle=False,    # "auto" mode only: allow reading pickled values
+)</code></pre>
                   </div>
                   <div class="snippet-pane" data-lang="java">
                      <pre><code data-syntax="java">LyteCache cache = LyteCache.builder()
-                      .path(Path.of("/data/my-cache.db"))    // optional; platform cache dir if omitted
-                      .namespace("sessions")                  // isolate multiple caches in one file
-                      .maxKeys(100_000)                       // evict when exceeded (default: 1M)
-                      .maxBytes(256L * 1024 * 1024)           // evict when exceeded (default: 1 GB)
-                      .eviction(Eviction.LRU)                 // LRU (default), TTL, RANDOM, NOEVICTION
-                      .sweepInterval(Duration.ofSeconds(60))  // background cleanup frequency
-                      .strict(false)                          // on read error: log+miss, or throw
-                      .build();</code></pre>
+.path(Path.of("/data/my-cache.db"))    // optional; platform cache dir if omitted
+.namespace("sessions")                  // isolate multiple caches in one file
+.maxKeys(100_000)                       // evict when exceeded (default: 1M)
+.maxBytes(256L * 1024 * 1024)           // evict when exceeded (default: 1 GB)
+.eviction(Eviction.LRU)                 // LRU (default), TTL, RANDOM, NOEVICTION
+.sweepInterval(Duration.ofSeconds(60))  // background cleanup frequency
+.strict(false)                          // on read error: log+miss, or throw
+.build();</code></pre>
                   </div>
                </div>
                <p><strong>Eviction policies:</strong> <code>lru</code> (default, evicts least-recently-used), <code>ttl</code> (soonest-to-expire first), <code>random</code>, and <code>noeviction</code> (rejects the write instead of evicting). LFU is a documented TODO in both.</p>
@@ -629,22 +651,22 @@
                      </div>
                      <div class="snippet-pane is-active" data-lang="python">
                         <pre><code data-syntax="python">cache.set("key", "value")
-                          cache.set("key", "value", ttl=300)
-                          cache.get("key")                 # None if missing or expired
-                          cache.get("key", "default")      # custom default on miss
-                          cache.delete("key1", "key2")     # returns count actually deleted
-                          cache.exists("key")
-                        </code></pre>
+cache.set("key", "value", ttl=300)
+cache.get("key")                 # None if missing or expired
+cache.get("key", "default")      # custom default on miss
+cache.delete("key1", "key2")     # returns count actually deleted
+cache.exists("key")
+</code></pre>
                      </div>
                      <div class="snippet-pane" data-lang="java">
                         <pre><code data-syntax="java">cache.set("key", "value");
-                          cache.set("key", "value", Duration.ofMinutes(5));
-                          String val = cache.getString("key");   // null if missing or expired
-                          Long n = cache.getLong("key");
-                          Double d = cache.getDouble("key");
-                          byte[] b = cache.getBytes("key");
-                          cache.delete("key1", "key2");          // returns count actually deleted
-                          cache.exists("key");</code></pre>
+cache.set("key", "value", Duration.ofMinutes(5));
+String val = cache.getString("key");   // null if missing or expired
+Long n = cache.getLong("key");
+Double d = cache.getDouble("key");
+byte[] b = cache.getBytes("key");
+cache.delete("key1", "key2");          // returns count actually deleted
+cache.exists("key");</code></pre>
                      </div>
                   </div>
                </div>
@@ -662,26 +684,26 @@
                      <div class="snippet-pane is-active" data-lang="python">
                         <pre><code data-syntax="python">from dataclasses import dataclass
 
-                          @dataclass
-                          class Person:
-                              name: str
-                              age: int
+@dataclass
+class Person:
+    name: str
+    age: int
 
-                          cache.set("p:1", Person("Ada", 30))
-                          cache.get("p:1")                # plain dict by default
-                          cache.get("p:1", cls=Person)    # typed: Person(name="Ada", age=30)</code></pre>
+cache.set("p:1", Person("Ada", 30))
+cache.get("p:1")                # plain dict by default
+cache.get("p:1", cls=Person)    # typed: Person(name="Ada", age=30)</code></pre>
                      </div>
                      <div class="snippet-pane" data-lang="java">
                         <pre><code data-syntax="java">record Person(String name, int age) {}
 
-                          cache.set("p:1", new Person("Ada", 30));
-                          cache.get("p:1", Person.class);
+cache.set("p:1", new Person("Ada", 30));
+cache.get("p:1", Person.class);
 
-                          // Generic types a raw Class can't express:
-                          Map<String, Long> scores = cache.get("scores",
-                              new TypeReference<Map<String, Long>>() {});
+// Generic types a raw Class can't express:
+Map<String, Long> scores = cache.get("scores",
+    new TypeReference<Map<String, Long>>() {});
 
-                          </code></pre>
+</code></pre>
                      </div>
                   </div>
                </div>
@@ -697,13 +719,13 @@
                      </div>
                      <div class="snippet-pane is-active" data-lang="python">
                         <pre><code data-syntax="python">cache.add("key", "value", ttl=60)      # set only if absent (SET NX)
-                        cache.replace("key", "value", ttl=60)  # set only if present (SET XX)
-                        cache.get_set("key", "new")            # atomic swap, returns the old value</code></pre>
+cache.replace("key", "value", ttl=60)  # set only if present (SET XX)
+cache.get_set("key", "new")            # atomic swap, returns the old value</code></pre>
                      </div>
                      <div class="snippet-pane" data-lang="java">
                         <pre><code data-syntax="java">cache.add("key", "value", ttl);      // set only if absent (SET NX)
-                          cache.replace("key", "value", ttl);  // set only if present (SET XX)
-                          cache.getSet("key", "new");          // atomic swap, returns the old value</code></pre>
+cache.replace("key", "value", ttl);  // set only if present (SET XX)
+cache.getSet("key", "new");          // atomic swap, returns the old value</code></pre>
                      </div>
                   </div>
                </div>
@@ -719,11 +741,11 @@
                      </div>
                      <div class="snippet-pane is-active" data-lang="python">
                         <pre><code data-syntax="python">cache.set_many({"a": "1", "b": "2"}, ttl=60)   # single transaction
-                          cache.get_many(["a", "b", "missing"])           # {"a": "1", "b": "2"}</code></pre>
+cache.get_many(["a", "b", "missing"])           # {"a": "1", "b": "2"}</code></pre>
                      </div>
                      <div class="snippet-pane" data-lang="java">
                         <pre><code data-syntax="java">cache.setAll(Map.of("a", "1", "b", "2"), ttl);   // single transaction
-                          cache.getAll(List.of("a", "b", "missing"));       // {a=1, b=2}</code></pre>
+cache.getAll(List.of("a", "b", "missing"));       // {a=1, b=2}</code></pre>
                      </div>
                   </div>
                </div>
@@ -740,16 +762,16 @@
                      </div>
                      <div class="snippet-pane is-active" data-lang="python">
                         <pre><code data-syntax="python">cache.incr("hits")             # +1
-                        cache.incr("hits", 5)          # +5
-                        cache.decr("hits")             # -1
-                        cache.incr_float("ratio", 0.5)
-                      </code></pre>
+cache.incr("hits", 5)          # +5
+cache.decr("hits")             # -1
+cache.incr_float("ratio", 0.5)
+</code></pre>
                      </div>
                      <div class="snippet-pane" data-lang="java">
                         <pre><code data-syntax="java">cache.incr("hits");              // +1
-                          cache.incr("hits", 5);           // +5
-                          cache.decr("hits");              // -1
-                          cache.incrDouble("ratio", 0.5);</code></pre>
+cache.incr("hits", 5);           // +5
+cache.decr("hits");              // -1
+cache.incrDouble("ratio", 0.5);</code></pre>
                      </div>
                   </div>
                </div>
@@ -765,12 +787,12 @@
                      </div>
                      <div class="snippet-pane is-active" data-lang="python">
                         <pre><code data-syntax="python">for key in cache.keys("session:*"):   # lazy iterator, glob syntax
-                        print(key)
-                      </code></pre>
+print(key)
+</code></pre>
                      </div>
                      <div class="snippet-pane" data-lang="java">
                         <pre><code data-syntax="java">cache.keys("session:*")                // lazy Stream&lt;String&gt;, GLOB syntax
-                          .forEach(System.out::println);</code></pre>
+.forEach(System.out::println);</code></pre>
                      </div>
                   </div>
                </div>
@@ -786,20 +808,20 @@
                      </div>
                      <div class="snippet-pane is-active" data-lang="python">
                         <pre><code data-syntax="python">cache.stats()
-                          # {'hits': 42, 'misses': 3, 'hit_rate': 0.93, 'key_count': 12,
-                          #  'size_bytes': 8291, 'evictions': 0, 'path': '...'}
-                          cache.vacuum()   # reclaim disk space
-                          cache.close()    # shut down cleanly
-                        </code></pre>
+# {'hits': 42, 'misses': 3, 'hit_rate': 0.93, 'key_count': 12,
+#  'size_bytes': 8291, 'evictions': 0, 'path': '...'}
+cache.vacuum()   # reclaim disk space
+cache.close()    # shut down cleanly
+</code></pre>
                      </div>
                      <div class="snippet-pane" data-lang="java">
                         <pre><code data-syntax="java">CacheStats stats = cache.stats();
-                          stats.hitRate();     // percentage
-                          stats.keyCount();
-                          stats.sizeBytes();
-                          stats.path();
-                          cache.vacuum();      // reclaim disk space
-                          cache.close();       // shut down cleanly (or use try-with-resources)</code></pre>
+stats.hitRate();     // percentage
+stats.keyCount();
+stats.sizeBytes();
+stats.path();
+cache.vacuum();      // reclaim disk space
+cache.close();       // shut down cleanly (or use try-with-resources)</code></pre>
                      </div>
                   </div>
                </div>
@@ -816,13 +838,13 @@
                      </div>
                      <div class="snippet-pane is-active" data-lang="python">
                         <pre><code data-syntax="python">with cache.lock("resource", timeout=30):
-                          do_critical_work()</code></pre>
+do_critical_work()</code></pre>
                      </div>
                      <div class="snippet-pane" data-lang="java">
                         <pre><code data-syntax="java">try (CacheLock lock = cache.lock("resource", Duration.ofSeconds(30))) {
-                            doCriticalWork();
-                        }
-                      </code></pre>
+    doCriticalWork();
+}
+</code></pre>
                      </div>
                   </div>
                </div>
@@ -838,12 +860,12 @@
                      </div>
                      <div class="snippet-pane is-active" data-lang="python">
                         <pre><code data-syntax="python">@cache.memoize(ttl=3600)
-                          def expensive(x):
-                              return compute(x)</code></pre>
+def expensive(x):
+    return compute(x)</code></pre>
                      </div>
                      <div class="snippet-pane" data-lang="java">
                         <pre><code data-syntax="java">String result = cache.memoize("expensive:" + x, Duration.ofHours(1),
-                          () -> compute(x));</code></pre>
+() -> compute(x));</code></pre>
                      </div>
                   </div>
                </div>
@@ -917,7 +939,13 @@
       <script>
          (function(){
            "use strict";
-         
+
+           // Populated by the terminal-demo section below, once it's set up; lets the
+           // language toggle (defined later in this file) jump the demo to match whichever
+           // language the reader just picked, instead of only relabeling the title and leaving
+           // the body to catch up on its own auto-cycle up to ~2s later.
+           var terminalDemo = null;
+
            /* ---------- theme ---------- */
            var root = document.documentElement;
            var themeBtn = document.getElementById("themeToggle");
@@ -950,6 +978,8 @@
          
            /* ---------- global language toggle (syncs every snippet on the page) ---------- */
            var currentLang = localStorage.getItem("lc-lang") || "python";
+           var INSTALL_TO_LANG = { pip: "python", gradle: "java", maven: "java" };
+           var lastJavaInstall = "gradle"; // which of gradle/maven to show when switching back to Java
            function applyLang(lang, persist){
              currentLang = lang;
              document.querySelectorAll(".lang-group").forEach(function(group){
@@ -961,6 +991,16 @@
                });
              });
              document.getElementById("termTitle").textContent = lang === "java" ? "Quickstart.java" : "quickstart.py";
+             if (terminalDemo) terminalDemo.showLang(lang);
+             // Keep the hero install-method pills (pip/Gradle/Maven) in step with the language
+             // toggle too, so picking a language anywhere on the page also switches how you'd
+             // install it, and vice versa (wired below).
+             var activeInstall = document.querySelector(".install-pill.active");
+             var activeInstallLang = activeInstall ? INSTALL_TO_LANG[activeInstall.getAttribute("data-install")] : null;
+             if (activeInstallLang !== lang){
+               var nextInstall = lang === "python" ? "pip" : lastJavaInstall;
+               setInstallMethod(nextInstall);
+             }
              if (persist) localStorage.setItem("lc-lang", lang);
            }
            document.addEventListener("click", function(e){
@@ -969,15 +1009,22 @@
            });
            applyLang(currentLang, false);
          
-           /* ---------- install method toggle (independent, 3-way) ---------- */
+           /* ---------- install method toggle (3-way: pip / Gradle / Maven) ---------- */
+           function setInstallMethod(target){
+             document.querySelectorAll(".install-pill").forEach(function(p){
+               p.classList.toggle("active", p.getAttribute("data-install") === target);
+             });
+             document.querySelectorAll("[data-install-pane]").forEach(function(pane){
+               pane.classList.toggle("is-active", pane.getAttribute("data-install-pane") === target);
+             });
+             if (target === "gradle" || target === "maven") lastJavaInstall = target;
+           }
            document.addEventListener("click", function(e){
              var btn = e.target.closest("[data-install]");
              if (!btn) return;
              var target = btn.getAttribute("data-install");
-             btn.parentElement.querySelectorAll(".install-pill").forEach(function(p){ p.classList.toggle("active", p === btn); });
-             document.querySelectorAll("[data-install-pane]").forEach(function(pane){
-               pane.classList.toggle("is-active", pane.getAttribute("data-install-pane") === target);
-             });
+             setInstallMethod(target);
+             applyLang(INSTALL_TO_LANG[target], true);
            });
          
            /* ---------- copy buttons ---------- */
@@ -1061,7 +1108,9 @@
              // inside a string) can't be mistaken for markup or re-tokenized.
              var commentPattern = (lang === "python" || lang === "bash") ? "#.*" : "//.*";
              var stringPattern = "\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'";
-             var numberPattern = "\\b\\d+\\.?\\d*\\b";
+             // (?:\.\d+)* rather than \.?\d* so a dotted version like 0.1.0 highlights as one
+             // token instead of splitting into "0.1" + "." + "0".
+             var numberPattern = "\\b\\d+(?:\\.\\d+)*\\b";
              var parts = ["(" + commentPattern + ")", "(" + stringPattern + ")", "(" + numberPattern + ")"];
              if (kws.length){
                var kwPattern = kws.map(function(k){ return k.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"); }).join("|");
@@ -1070,7 +1119,16 @@
              var master = new RegExp(parts.join("|"), "g");
              var out = "";
              var lastIndex = 0;
-             raw.replace(master, function(match, com, str, num, kw, offset){
+             raw.replace(master, function(){
+               // Capture-group count varies (xml/bash/groovy have no keyword group at all), so
+               // don't rely on a fixed parameter list -- replace() always passes offset and the
+               // full string as the last two arguments, whatever the group count is.
+               var args = arguments;
+               var match = args[0];
+               var offset = args[args.length - 2];
+               var hasKeywordGroup = args.length > 6; // match + com/str/num[/kw] + offset + string
+               var com = args[1], str = args[2], num = args[3];
+               var kw = hasKeywordGroup ? args[4] : undefined;
                out += escapeHtml(raw.slice(lastIndex, offset));
                var cls = com !== undefined ? "tok-com" : str !== undefined ? "tok-str" : num !== undefined ? "tok-num" : "tok-kw";
                out += '<span class="' + cls + '">' + escapeHtml(match) + '</span>';
@@ -1109,34 +1167,49 @@
            };
            var termEl = document.getElementById("termOutput");
            var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-           function renderStatic(lines){
-             termEl.textContent = lines.join("\n");
+           function renderDemo(text, lang, withCursor){
+             var html = highlight(text, lang);
+             if (withCursor) html += '<span class="cursor"></span>';
+             termEl.innerHTML = html;
            }
-           if (reduceMotion || !termEl) {
-             renderStatic(demos.python);
+           if (!termEl) {
+             // no-op
+           } else if (reduceMotion) {
+             // No animation, but still get the same live syntax highlighting as every other
+             // snippet on the page -- reduced motion means no typing effect, not a plainer demo.
+             renderDemo(demos.python.join("\n"), "python", false);
+             terminalDemo = {
+               showLang: function(lang){ renderDemo(demos[lang].join("\n"), lang, false); }
+             };
            } else {
-             (function loop(){
-               var seq = ["python","java"];
-               var seqIdx = 0;
-               function typeLang(){
-                 var lines = demos[seq[seqIdx]];
-                 var full = lines.join("\n");
-                 var i = 0;
-                 termEl.textContent = "";
-                 var typer = setInterval(function(){
-                   i += 2;
-                   termEl.textContent = full.slice(0, i);
-                   if (i >= full.length){
-                     clearInterval(typer);
-                     setTimeout(function(){
-                       seqIdx = (seqIdx + 1) % seq.length;
-                       typeLang();
-                     }, 2200);
-                   }
-                 }, 14);
-               }
-               typeLang();
-             })();
+             var seq = ["python", "java"];
+             var seqIdx = 0;
+             var typer = null;
+             var advanceTimer = null;
+             function typeLang(lang){
+               clearInterval(typer);
+               clearTimeout(advanceTimer);
+               seqIdx = seq.indexOf(lang);
+               if (seqIdx < 0) seqIdx = 0;
+               var full = demos[lang].join("\n");
+               var i = 0;
+               renderDemo("", lang, true);
+               typer = setInterval(function(){
+                 i += 2;
+                 var done = i >= full.length;
+                 renderDemo(full.slice(0, done ? full.length : i), lang, true);
+                 if (done){
+                   clearInterval(typer);
+                   advanceTimer = setTimeout(function(){
+                     typeLang(seq[(seqIdx + 1) % seq.length]);
+                   }, 2200);
+                 }
+               }, 14);
+             }
+             terminalDemo = {
+               showLang: function(lang){ typeLang(lang); }
+             };
+             typeLang(currentLang === "java" ? "java" : "python");
            }
          })();
       </script>
