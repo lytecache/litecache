@@ -9,7 +9,7 @@ on:
 
 defaults:
   run:
-    working-directory: litecache-java
+    working-directory: lytecache-java
 
 jobs:
   release:
@@ -45,28 +45,28 @@ jobs:
       - name: Create release notes
         run: |
           cat > release-notes.md << 'EOF'
-          # LiteCache Java ${{ github.ref_name }}
+          # LyteCache Java ${{ github.ref_name }}
 
-          See litecache-java/README.md for usage and litecache-java/SPEC.md for the storage format.
+          See lytecache-java/README.md for usage and lytecache-java/SPEC.md for the storage format.
 
           ## Installation
 
           ```gradle
-          implementation 'io.litecache:litecache:${{ github.ref_name }}'
+          implementation 'io.lytecache:lytecache:${{ github.ref_name }}'
           ```
 
           ## Artifacts
 
-          - litecache-${{ github.ref_name }}.jar
-          - litecache-${{ github.ref_name }}-sources.jar
-          - litecache-${{ github.ref_name }}-javadoc.jar
+          - lytecache-${{ github.ref_name }}.jar
+          - lytecache-${{ github.ref_name }}-sources.jar
+          - lytecache-${{ github.ref_name }}-javadoc.jar
           EOF
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
-          body_path: litecache-java/release-notes.md
+          body_path: lytecache-java/release-notes.md
           files: |
-            litecache-java/build/libs/litecache-*.jar
+            lytecache-java/build/libs/lytecache-*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

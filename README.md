@@ -1,15 +1,15 @@
-# litecache
+# lytecache
 
 **Redis-like caching with zero infrastructure — no server, just a local SQLite file.**
 
-`litecache` gives you the familiar Redis API surface — `set`/`get`, TTLs, atomic counters, eviction, distributed locks — backed by a single portable SQLite file instead of a daemon. No server to run, no port to open, no client to configure. Just add the dependency and go.
+`lytecache` gives you the familiar Redis API surface — `set`/`get`, TTLs, atomic counters, eviction, distributed locks — backed by a single portable SQLite file instead of a daemon. No server to run, no port to open, no client to configure. Just add the dependency and go.
 
 This repository is a **monorepo** containing two independent, same-spec implementations:
 
 | Package | Language | Install | Docs |
 |---|---|---|---|
-| [`litecache-python/`](litecache-python/) | Python 3.9+ | `pip install litecache` | [litecache-python/README.md](litecache-python/README.md) |
-| [`litecache-java/`](litecache-java/) | Java 17+ | `io.litecache:litecache` (Gradle/Maven) | [litecache-java/README.md](litecache-java/README.md) |
+| [`lytecache-python/`](lytecache-python/) | Python 3.9+ | `pip install lytecache` | [lytecache-python/README.md](lytecache-python/README.md) |
+| [`lytecache-java/`](lytecache-java/) | Java 17+ | `io.lytecache:lytecache` (Gradle/Maven) | [lytecache-java/README.md](lytecache-java/README.md) |
 
 They share one on-disk [storage spec](#storage-spec--cross-language-compatibility): a cache file written by one is readable — and, for counters, atomically incrementable — by the other. Everything below is a quick tour; each package's own README is the full reference for that language.
 
@@ -21,9 +21,9 @@ They share one on-disk [storage spec](#storage-spec--cross-language-compatibilit
 <td>
 
 ```python
-from litecache import LiteCache
+from lytecache import LyteCache
 
-cache = LiteCache()            # no path, no setup
+cache = LyteCache()            # no path, no setup
 cache.set("user:42", {"name": "Ada"}, ttl=300)
 cache.get("user:42")           # {"name": "Ada"}
 cache.incr("hits")             # 1
@@ -33,10 +33,10 @@ cache.incr("hits")             # 1
 <td>
 
 ```java
-import io.litecache.LiteCache;
+import io.lytecache.LyteCache;
 import java.time.Duration;
 
-try (LiteCache cache = new LiteCache()) {
+try (LyteCache cache = new LyteCache()) {
     cache.set("user:42", "Ada", Duration.ofMinutes(5));
     cache.getString("user:42");  // "Ada"
     cache.incr("hits");          // 1
@@ -54,20 +54,20 @@ That's it in both languages: the first call creates the database file (including
 Both implementations resolve the **same default file** for the same project, using the same derivation, so a Python process and a Java process started from the same working directory share one cache automatically:
 
 ```
-<platform cache dir>/litecache/<project-id>.db
+<platform cache dir>/lytecache/<project-id>.db
 ```
 
-- **Linux**: `$XDG_CACHE_HOME/litecache/<project-id>.db`, or `~/.cache/litecache/<project-id>.db`
-- **macOS**: `~/Library/Caches/litecache/<project-id>.db`
-- **Windows**: `%LOCALAPPDATA%\litecache\<project-id>.db`
+- **Linux**: `$XDG_CACHE_HOME/lytecache/<project-id>.db`, or `~/.cache/lytecache/<project-id>.db`
+- **macOS**: `~/Library/Caches/lytecache/<project-id>.db`
+- **Windows**: `%LOCALAPPDATA%\lytecache\<project-id>.db`
 
 `<project-id>` is the first 12 hex characters of the SHA-256 hash of your current working directory's resolved, absolute path — identical in both languages, so every project gets its own file automatically and nothing is left behind in your repo.
 
 Override it the same way in either language:
-- Pass an explicit path (`LiteCache("/data/cache.db")` in Python, `.path(Path.of("/data/cache.db"))` on the Java builder).
-- Set `LITECACHE_PATH=/data/cache.db` in the environment — takes priority over the default in both.
+- Pass an explicit path (`LyteCache("/data/cache.db")` in Python, `.path(Path.of("/data/cache.db"))` on the Java builder).
+- Set `LYTECACHE_PATH=/data/cache.db` in the environment — takes priority over the default in both.
 
-Both expose the resolved path programmatically (`LiteCache.default_path()` / `cache.path` in Python; `LiteCache.defaultPath()` / `cache.path()` in Java) — the file is never a mystery.
+Both expose the resolved path programmatically (`LyteCache.default_path()` / `cache.path` in Python; `LyteCache.defaultPath()` / `cache.path()` in Java) — the file is never a mystery.
 
 ## API at a glance
 
@@ -96,19 +96,19 @@ Two easy-to-miss details that come up often:
 Both are context managers / `AutoCloseable`:
 
 ```python
-with LiteCache() as cache:
+with LyteCache() as cache:
     cache.set("k", "v")
 ```
 
 ```java
-try (LiteCache cache = new LiteCache()) {
+try (LyteCache cache = new LyteCache()) {
     cache.set("k", "v");
 }
 ```
 
 See each package's README for full method signatures, configuration options, and serialization rules (values are stored as portable JSON so complex objects round-trip across both languages — see [Storage spec](#storage-spec--cross-language-compatibility)).
 
-## When to use litecache
+## When to use lytecache
 
 **Good fit:**
 - Single-node apps (or single-machine, multi-process apps) that want caching, counters, or TTLs with zero infrastructure.
@@ -120,12 +120,12 @@ See each package's README for full method signatures, configuration options, and
 **Not a good fit:**
 - A cache shared live across multiple servers/hosts — SQLite is a local file, not a network service. Use Redis/Memcached.
 - Heavy concurrent write throughput from many processes — SQLite's single-writer model will serialize writes and become a bottleneck.
-- Pub/sub, streams, or other Redis data structures beyond key-value + counters — litecache intentionally stays small.
+- Pub/sub, streams, or other Redis data structures beyond key-value + counters — lytecache intentionally stays small.
 - Complex queries over cached data — use a real database.
 
 ## Storage spec & cross-language compatibility
 
-Both implementations read and write the same schema and value encoding, documented as a versioned spec in each package (kept in sync): [litecache-python/SPEC.md](litecache-python/SPEC.md), [litecache-java/SPEC.md](litecache-java/SPEC.md). In short:
+Both implementations read and write the same schema and value encoding, documented as a versioned spec in each package (kept in sync): [lytecache-python/SPEC.md](lytecache-python/SPEC.md), [lytecache-java/SPEC.md](lytecache-java/SPEC.md). In short:
 
 - One SQLite file, WAL mode, `PRAGMA busy_timeout=5000` so cross-process/cross-thread contention waits instead of failing.
 - Every value is tagged with a `value_type` code: `0` bytes, `1` UTF-8 string, `2` int (UTF-8 decimal text, not binary — this is what lets `incr`/`decr` be a single atomic SQL UPSERT in both languages), `3` float (UTF-8 decimal text), `4` JSON (the format for any object/dict/list/dataclass/POJO/record).
@@ -138,17 +138,17 @@ Each package builds independently:
 
 ```bash
 # Python
-cd litecache-python
+cd lytecache-python
 pip install -e ".[dev]"   # or: uv sync
 pytest
 
 # Java
-cd litecache-java
+cd lytecache-java
 ./gradlew build           # compiles, runs tests, generates javadoc
 ./gradlew publishToMavenLocal
 ```
 
-See [litecache-python/README.md](litecache-python/README.md) and [litecache-java/README.md](litecache-java/README.md) for full configuration references, and [litecache-python/CHANGELOG.md](litecache-python/CHANGELOG.md) for release notes.
+See [lytecache-python/README.md](lytecache-python/README.md) and [lytecache-java/README.md](lytecache-java/README.md) for full configuration references, and [lytecache-python/CHANGELOG.md](lytecache-python/CHANGELOG.md) for release notes.
 
 ## License
 
