@@ -32,6 +32,7 @@ logger = logging.getLogger("litecache")
 F = TypeVar("F", bound=Callable[..., Any])
 
 _VALID_EVICTION = ("lru", "ttl", "random", "noeviction")
+_VALID_SERIALIZERS = ("auto", "json", "pickle")
 _LRU_FLUSH_THRESHOLD = 200
 _EXPIRE_BATCH = 500
 _OPPORTUNISTIC_EVERY = 100
@@ -52,6 +53,13 @@ class LiteCache:
         cache = LiteCache()
         cache.set("user:42", {"name": "Ada"}, ttl=300)
         cache.get("user:42")
+
+    SECURITY: unpickling can execute arbitrary code. The default
+    ``serializer="auto"`` (and ``serializer="json"``) never write or read
+    pickled data, so this does not apply to them. Only ``serializer="pickle"``
+    (or ``serializer="auto"`` combined with ``allow_pickle=True``) can read
+    pickled values -- treat a cache file that might contain pickled data like
+    application code, and never open one from an untrusted source.
     """
 
     def __init__(
@@ -63,15 +71,23 @@ class LiteCache:
         max_bytes: int | None = None,
         eviction: str = "lru",
         sweep_interval: float | None = 60.0,
-        serializer: str = "json",
+        serializer: str = "auto",
         strict: bool = False,
+        allow_pickle: bool = False,
     ) -> None:
         if eviction not in _VALID_EVICTION:
             raise ValueError(
                 f"invalid eviction policy {eviction!r}; expected one of {_VALID_EVICTION}"
             )
-        if serializer != "json":
-            raise ValueError("only the 'json' serializer is supported in this version")
+        if serializer not in _VALID_SERIALIZERS:
+            raise ValueError(
+                f"invalid serializer {serializer!r}; expected one of {_VALID_SERIALIZERS}"
+            )
+        if serializer == "json" and allow_pickle:
+            raise ValueError(
+                "allow_pickle is not compatible with serializer='json' "
+                "(json mode never reads pickled values, by design)"
+            )
         if sweep_interval is not None and sweep_interval <= 0:
             raise ValueError("sweep_interval must be a positive number of seconds, or None")
 
@@ -83,6 +99,7 @@ class LiteCache:
         self._sweep_interval = sweep_interval
         self._serializer = serializer
         self._strict = strict
+        self._allow_pickle = allow_pickle
 
         self._local = threading.local()
         self._lock = threading.RLock()
@@ -161,7 +178,7 @@ class LiteCache:
 
     def set(self, key: str, value: Any, ttl: float | None = None) -> None:
         self._require_open()
-        blob, vtype = serialize(value)
+        blob, vtype = serialize(value, mode=self._serializer)
         now = _now_ms()
         expires_at = None if ttl is None else now + int(ttl * 1000)
         conn = self._get_conn()
@@ -195,7 +212,7 @@ class LiteCache:
         self._maybe_evict(conn)
         self._maybe_opportunistic_maintenance()
 
-    def get(self, key: str, default: Any = None) -> Any:
+    def get(self, key: str, default: Any = None, cls: type[Any] | None = None) -> Any:
         self._require_open()
         now = _now_ms()
         try:
@@ -231,7 +248,13 @@ class LiteCache:
         self._maybe_opportunistic_maintenance()
 
         try:
-            return deserialize(value_blob, value_type)
+            return deserialize(
+                value_blob,
+                value_type,
+                mode=self._serializer,
+                allow_pickle=self._allow_pickle,
+                cls=cls,
+            )
         except LiteCacheError as exc:
             if self._strict:
                 raise
@@ -266,7 +289,7 @@ class LiteCache:
 
     def add(self, key: str, value: Any, ttl: float | None = None) -> bool:
         self._require_open()
-        blob, vtype = serialize(value)
+        blob, vtype = serialize(value, mode=self._serializer)
         now = _now_ms()
         expires_at = None if ttl is None else now + int(ttl * 1000)
         conn = self._get_conn()
@@ -305,7 +328,7 @@ class LiteCache:
 
     def replace(self, key: str, value: Any, ttl: float | None = None) -> bool:
         self._require_open()
-        blob, vtype = serialize(value)
+        blob, vtype = serialize(value, mode=self._serializer)
         now = _now_ms()
         expires_at = None if ttl is None else now + int(ttl * 1000)
         conn = self._get_conn()
@@ -322,7 +345,7 @@ class LiteCache:
 
     def get_set(self, key: str, value: Any) -> Any:
         self._require_open()
-        blob, vtype = serialize(value)
+        blob, vtype = serialize(value, mode=self._serializer)
         now = _now_ms()
         conn = self._get_conn()
         conn.execute("BEGIN IMMEDIATE")
@@ -364,7 +387,9 @@ class LiteCache:
             conn.execute("COMMIT")
         if row is None:
             return None
-        return deserialize(row[0], row[1])
+        return deserialize(
+            row[0], row[1], mode=self._serializer, allow_pickle=self._allow_pickle
+        )
 
     def set_many(self, mapping: Mapping[str, Any], ttl: float | None = None) -> None:
         self._require_open()
@@ -374,7 +399,7 @@ class LiteCache:
         expires_at = None if ttl is None else now + int(ttl * 1000)
         rows = []
         for k, v in mapping.items():
-            blob, vtype = serialize(v)
+            blob, vtype = serialize(v, mode=self._serializer)
             rows.append(
                 {
                     "ns": self._namespace,
@@ -430,7 +455,9 @@ class LiteCache:
         for k, value_blob, value_type, expires_at in rows:
             if expires_at is not None and expires_at <= now:
                 continue
-            result[k] = deserialize(value_blob, value_type)
+            result[k] = deserialize(
+                value_blob, value_type, mode=self._serializer, allow_pickle=self._allow_pickle
+            )
             self._buffer_lru(k, now)
         hits = len(result)
         misses = len(key_list) - hits

@@ -33,6 +33,13 @@ def test_incr_atomic_across_processes(db_path):
 
 
 def test_lock_mutual_exclusion_across_processes(db_path, tmp_path):
+    # Pre-create the file/schema/WAL mode before spawning workers, same as
+    # the other two tests in this module -- otherwise all N processes race
+    # to create the database from scratch simultaneously, which is a race
+    # on SQLite's own first-time WAL conversion, not on our lock semantics.
+    cache = LiteCache(db_path, sweep_interval=None)
+    cache.close()
+
     log_path = tmp_path / "lock_log.txt"
     log_path.write_text("")
 

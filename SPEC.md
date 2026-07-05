@@ -109,28 +109,89 @@ a future schema-compatible release.
 
 ## Serialization / value_type codes
 
-| code | type | encoding |
-|---|---|---|
-| 0 | `bytes` | stored as-is |
-| 1 | `str` | UTF-8 encoded |
-| 2 | `int` | decimal ASCII text, e.g. `b"42"`, `b"-3"` |
-| 3 | `float` | `repr(float)`-style decimal ASCII text, e.g. `b"3.14"` |
-| 4 | `json` | UTF-8 encoded `json.dumps(...)` output |
+| code | type | encoding | portable |
+|---|---|---|---|
+| 0 | `bytes` | stored as-is | yes |
+| 1 | `str` | UTF-8 encoded | yes |
+| 2 | `int` | decimal ASCII text, e.g. `b"42"`, `b"-3"` | yes |
+| 3 | `float` | `repr(float)`-style decimal ASCII text, e.g. `b"3.14"` | yes |
+| 4 | `json` | UTF-8 encoded JSON (see below) | yes |
+| 5 | `pickle` | Python `pickle.dumps(..., protocol=HIGHEST_PROTOCOL)` | **no** (Python-only) |
+| 6 | *(reserved)* | a Java-native serialization format | **no** (Java-only) |
+
+Only codes 0–4 are cross-language portable and are what a from-scratch
+implementation in another language (e.g. the companion Java implementation)
+should read and write. Codes 5 and 6 are opt-in, language-specific escape
+hatches: litecache never writes code 6, and only writes code 5 when the
+cache is explicitly opened with `serializer="pickle"`. A reader that
+encounters a code it does not recognize or does not support (including
+6, or any value outside 0–6) MUST raise an error naming the code, rather
+than returning the raw blob silently.
+
+### Native types (codes 0–3)
 
 `str`/`int`/`float`/`bytes` round-trip exactly. `bool` is stored as JSON
-(code 4, `b"true"`/`b"false"`) since it is a subtype of `int` in Python and
-would otherwise lose its boolean identity on read-back. Any other value is
-JSON-encoded; values that are not JSON-serializable raise
-`SerializationError` rather than falling back to pickle (pickle is
-intentionally never used, for security reasons).
+(code 4, `b"true"`/`b"false"`), not as an int, since `bool` is a subtype of
+`int` in Python and would otherwise lose its boolean identity on read-back.
 
 Atomic counters (`incr`/`decr`/`incr_float`) operate directly on the decimal
-text form via a single SQL `UPSERT`, using `CAST(value AS TEXT)` arithmetic;
-this is why int/float values are stored as decimal text rather than SQLite's
-native binary integer/real encoding. A counter operation against a row whose
-`value_type` is not numeric-compatible (`str`, `bytes`, or `json`) fails the
+text form of codes 2/3 via a single SQL `UPSERT`, using `CAST(value AS TEXT)`
+arithmetic; this is why int/float values are stored as decimal text rather
+than SQLite's native binary integer/real encoding. A counter operation
+against a row whose `value_type` is not numeric-compatible fails the
 UPSERT's `WHERE` guard and the caller receives a Python `TypeError` — no
 partial write occurs.
+
+### JSON encoding (code 4)
+
+- Encoded with compact separators and `ensure_ascii=False` (i.e. UTF-8
+  bytes, not `\uXXXX` escapes) — equivalent to Python's
+  `json.dumps(value, ensure_ascii=False, separators=(",", ":"))`.
+- `dict` and `list` values are encoded directly and round-trip as
+  `dict`/`list`.
+- `tuple` is encoded as a JSON array and round-trips as a `list` — there is
+  no tuple type in JSON, so this is a one-way conversion; document this to
+  your users if you re-implement the encoder.
+- Dataclasses (or the equivalent structured-record type in your language)
+  are encoded as a JSON object of their fields, recursively (nested
+  dataclasses become nested objects). In Python this is
+  `dataclasses.asdict(value)`.
+- Plain objects with an instance attribute dict (Python: anything with
+  `__dict__`, i.e. not using `__slots__`) are encoded as a JSON object of
+  their instance attributes (Python: `vars(value)`).
+- A value that is none of the above and cannot be represented as JSON
+  raises `SerializationError` under `serializer="auto"` or `"json"`; under
+  `serializer="pickle"` it falls back to code 5 instead.
+- On read, a JSON value decodes to a plain `dict`/`list`/`str`/`int`/
+  `float`/`bool`/`None` by default. A Python-specific extension,
+  `get(key, cls=SomeType)`, can additionally reconstruct a specific type
+  from the JSON object: if `SomeType` is a dataclass, its fields are
+  reconstructed recursively (nested dataclass-typed fields, resolved via
+  type hints, are rebuilt from their nested JSON objects); otherwise the
+  type is instantiated as `SomeType(**data)`. This reconstruction step is a
+  read-time convenience only — the bytes on disk are the same portable
+  JSON either way.
+
+### Pickle (code 5) — Python-only, opt-in
+
+Only ever written when the cache is constructed with `serializer="pickle"`,
+and only for values that codes 0–4 cannot represent. Reading a code-5 value
+back requires either `serializer="pickle"`, or `serializer="auto"` with
+`allow_pickle=True` explicitly passed; `serializer="json"` always refuses to
+read it. **Security note:** unpickling can execute arbitrary code during
+deserialization. `serializer="auto"` (the default) and `serializer="json"`
+never write or read pickled data, so this risk does not apply to them.
+Treat any cache file that might contain pickled data like application code:
+never open one from an untrusted source.
+
+### Foreign codes (6+)
+
+Code 6 is reserved for other languages' own native serialization formats
+(e.g. Java). litecache never writes it. If a from-scratch implementation in
+another language wants to store values its own native serializer can
+represent but JSON cannot, it should use its own reserved code in this
+range and document it here, following the same rule: never silently return
+raw bytes for a code your reader doesn't understand -- always raise.
 
 ## Concurrency
 

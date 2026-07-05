@@ -90,8 +90,10 @@ def test_get_many_empty(cache):
 
 
 def test_serialization_error_for_non_json(cache):
+    # No __dict__ (via __slots__) and not a dataclass: nothing left to fall
+    # back to under the default serializer="auto", so this must still raise.
     class Unserializable:
-        pass
+        __slots__ = ()
 
     with pytest.raises(SerializationError):
         cache.set("k", Unserializable())

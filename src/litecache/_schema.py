@@ -37,9 +37,14 @@ CREATE TABLE IF NOT EXISTS meta (
 );
 """
 
-# value_type codes
+# value_type codes -- see SPEC.md for the full table. 0-4 are cross-language
+# portable; 5 is a Python-only opt-in escape hatch; 6 is reserved for other
+# languages' native serializers (litecache never writes it, only recognizes it
+# on read so it can raise a clear error instead of returning raw bytes).
 TYPE_BYTES = 0
 TYPE_STR = 1
 TYPE_INT = 2
 TYPE_FLOAT = 3
 TYPE_JSON = 4
+TYPE_PICKLE = 5
+TYPE_JAVA = 6

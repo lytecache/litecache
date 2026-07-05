@@ -34,7 +34,7 @@ def platform_cache_dir() -> Path:
 def project_id(cwd: Path) -> str:
     """A short, stable hash identifying a project by its resolved working directory."""
     digest = hashlib.sha256(str(cwd.resolve()).encode("utf-8")).hexdigest()
-    return digest[:16]
+    return digest[:12]
 
 
 def default_path(cwd: Path | None = None) -> Path:

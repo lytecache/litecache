@@ -68,7 +68,7 @@ export LITECACHE_PATH=/data/cache.db  # takes priority over the default
 | Method | Description |
 |---|---|
 | `set(key, value, ttl=None)` | Store a value, optionally with a TTL in seconds. |
-| `get(key, default=None)` | Read a value; returns `default` on miss or expiry. Never raises on miss. |
+| `get(key, default=None, cls=None)` | Read a value; returns `default` on miss or expiry. Never raises on miss. `cls` reconstructs a dataclass/plain object from a stored JSON value. |
 | `delete(*keys)` | Delete keys; returns the number actually deleted. |
 | `exists(key)` | Whether a (non-expired) key is present. |
 | `add(key, value, ttl=None)` | Set only if absent (atomic `SET NX`). |
@@ -93,6 +93,50 @@ export LITECACHE_PATH=/data/cache.db  # takes priority over the default
 with LiteCache() as cache:
     cache.set("k", "v")
 ```
+
+## Serialization
+
+`str`/`int`/`float`/`bytes`/`bool` round-trip exactly. Anything else --
+`dict`, `list`, dataclasses, plain objects -- is JSON-encoded, and reads back
+as a plain `dict`/`list` by default:
+
+```python
+from dataclasses import dataclass
+
+@dataclass
+class Address:
+    city: str
+    zip_code: str
+
+@dataclass
+class Person:
+    name: str
+    age: int
+    address: Address
+
+cache.set("p:1", Person("Ada", 30, Address("London", "E1")))
+
+cache.get("p:1")               # {"name": "Ada", "age": 30, "address": {...}} -- plain dict
+cache.get("p:1", cls=Person)   # Person(name="Ada", age=30, address=Address(...)) -- typed
+```
+
+`tuple` values are JSON-encoded too and come back as `list` -- there's no
+tuple type in JSON.
+
+Values that can't be represented as JSON raise `SerializationError` by
+default (`serializer="auto"`). If you genuinely need to cache an arbitrary
+Python object, opt into pickling explicitly:
+
+```python
+cache = LiteCache(serializer="pickle")   # falls back to pickle when JSON can't represent a value
+```
+
+**Security note:** unpickling can execute arbitrary code. The default
+(`serializer="auto"`) and `serializer="json"` never write or read pickled
+data, so this doesn't apply to them. Only `serializer="pickle"` (or
+`serializer="auto"` with `allow_pickle=True`) can read pickled values --
+treat a cache file that might contain pickled data like application code,
+and never open one from an untrusted source.
 
 ## When to use litecache
 
@@ -123,19 +167,21 @@ LiteCache(
     sweep_interval=60.0,   # seconds between background maintenance passes;
                            # None disables the thread and does maintenance
                            # opportunistically every ~100 operations instead
-    serializer="json",     # only "json" is supported in this version
+    serializer="auto",     # "auto" | "json" (strict, no pickle) | "pickle"
     strict=False,          # True: raise on internal read errors instead of
                            # degrading to a miss
+    allow_pickle=False,    # "auto" mode only: allow reading pickled values
+                           # written by a serializer="pickle" cache
 )
 ```
 
 - **Eviction policies**: `lru` (default, evicts least-recently-used),
   `ttl` (evicts soonest-to-expire first), `random`, and `noeviction` (raises
   `CacheFullError` instead of evicting). `lfu` is a documented TODO.
-- **Serialization**: `str`/`int`/`float`/`bytes` are stored natively and
-  round-trip exactly; everything else is JSON-encoded. Pickle is never used.
-  Non-JSON-serializable values raise `SerializationError` -- serialize them
-  yourself first.
+- **Serialization**: see the [Serialization](#serialization) section above.
+  `serializer="auto"` (the default) and `serializer="json"` never write or
+  read pickled data; `serializer="pickle"` opts into pickling as a fallback
+  for values JSON can't represent.
 - **Concurrency**: safe across threads (one connection per thread) and
   across processes (SQLite WAL mode). `stats()` counters (hits/misses/etc.)
   are per-process, not shared cluster-wide.
