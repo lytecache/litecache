@@ -1623,7 +1623,6 @@ public class LiteCache implements AutoCloseable {
     /**
      * Builder for LiteCache configuration.
      */
-    @SuppressWarnings("missing-explicit-ctor")
     public static class Builder {
         private Path dbPath = defaultPath();
         private String namespace = "default";
@@ -1633,6 +1632,12 @@ public class LiteCache implements AutoCloseable {
         private Duration sweepInterval = Duration.ofSeconds(60);
         private boolean strict = false;
         private Serializer serializer = new DefaultSerializer();
+
+        /**
+         * Creates a new builder with default settings. Obtain one via {@link LiteCache#builder()}
+         * rather than calling this directly.
+         */
+        Builder() {}
 
         /**
          * Sets the database file path. Optional escape hatch; omit to use the zero-config default
