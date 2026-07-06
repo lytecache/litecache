@@ -167,12 +167,15 @@
          /* Headline and lead run full-width above the two-column row -- at the narrower column
          width the two-column layout would give them, the lead sentence wrapped to 4-5 lines;
          full width lets it settle into ~2. */
-         .hero-heading{ max-width:900px; margin-bottom:var(--space-8); }
+         .hero-heading{ max-width:1040px; margin-bottom:var(--space-8); }
          .hero-columns{ display:grid; grid-template-columns:1.1fr 1fr; gap:var(--space-12); align-items:center; }
-         .hero h1{ font-size:2.5rem; line-height:1.08; margin-bottom:var(--space-4); }
+         /* Fluid, not stepped: .nobr below forces "Redis-like caching." and "Zero infrastructure."
+         to each stay on one line, so the font size must scale down smoothly with the viewport or
+         those phrases overflow and get clipped by .hero's overflow:hidden on narrow phones. */
+         .hero h1{ font-size:clamp(1.1rem, 6vw, 2.5rem); line-height:1.15; margin-bottom:var(--space-4); }
          .hero h1 .hl{ color:var(--accent); }
          .hero h1 .nobr{ white-space:nowrap; }
-         .hero p.lead{ font-size:1.15rem; max-width:46ch; }
+         .hero p.lead{ font-size:1.15rem; }
          .hero-ctas{ display:flex; gap:var(--space-3); margin-top:var(--space-6); flex-wrap:wrap; }
          .btn{
          font-family:var(--font-display); font-size:.85rem; font-weight:700; padding:.7em 1.2em; border-radius:var(--radius-sm);
@@ -184,7 +187,7 @@
          .btn-ghost{ background:var(--surface); color:var(--text); }
          .btn-ghost:hover{ border-color:var(--accent); color:var(--accent); }
          .install-tabs{ margin-top:var(--space-8); max-width:100%; }
-         .pillrow{ display:inline-flex; border:1px solid var(--border); border-radius:999px; padding:3px; gap:2px; background:var(--surface); }
+         .pillrow{ display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:999px; padding:3px; gap:2px; background:var(--surface); }
          .pill{
          font-family:var(--font-display); font-size:.75rem; font-weight:700; padding:.4em .9em; border-radius:999px;
          border:none; background:transparent; color:var(--text-dim); cursor:pointer;
@@ -193,7 +196,7 @@
          /* auto-fit + minmax: two columns when there's genuinely enough room for both to breathe,
          one column (each pane full-width) the moment the container gets tighter -- no manual
          breakpoint needed, and it adapts to the hero's own column width, not just viewport width. */
-         .install-panes{ margin-top:var(--space-3); display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:var(--space-4); align-items:start; }
+         .install-panes{ margin-top:var(--space-3); display:grid; grid-template-columns:repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap:var(--space-4); align-items:start; }
          .install-snippet{ margin:0; }
          .install-label{ font-family:var(--font-display); font-size:.72rem; color:var(--text-dim); }
          /* terminal demo */
@@ -219,7 +222,7 @@
          .feature p{ font-size:.85rem; color:var(--text-dim); margin:0; }
          /* ============================= CODE / SNIPPETS ============================= */
          .snippet{ border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin:var(--space-4) 0 var(--space-6); background:var(--surface-2); }
-         .snippet-head{ display:flex; align-items:center; justify-content:space-between; padding:.5em .7em; border-bottom:1px solid var(--border); }
+         .snippet-head{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.5em; padding:.5em .7em; border-bottom:1px solid var(--border); }
          .snippet pre{ margin:0; padding:1em 1.1em; overflow-x:auto; font-size:.85rem; line-height:1.55; }
          .snippet-pane{ display:none; }
          .snippet-pane.is-active{ display:block; }
@@ -308,7 +311,6 @@
          main{ padding:0 var(--space-4) var(--space-16); }
          }
          @media (max-width:600px){
-         .hero h1{ font-size:1.9rem; }
          .feature-grid{ grid-template-columns:1fr; }
          .topbar-links a:not(.icon-btn){ display:none; }
          }
