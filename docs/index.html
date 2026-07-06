@@ -4,7 +4,7 @@
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>Lytecache — Embedded, Redis-like caching for every language</title>
-      <meta name="description" content="Redis-like caching with zero infrastructure. One SQLite file, no server, one storage spec implemented natively in Python, Java, Node.js, and more languages to come." />
+      <meta name="description" content="Redis-like caching with zero infrastructure. One SQLite file, no server, one storage spec implemented natively in Python, Java, Node.js, Go, PHP, and more languages to come." />
       <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%2396591a%22/%3E%3Ctext%20x%3D%2216%22%20y%3D%2223%22%20font-family%3D%22ui-monospace%2CMenlo%2CConsolas%2Cmonospace%22%20font-size%3D%2219%22%20font-weight%3D%22700%22%20fill%3D%22%23fff%22%20text-anchor%3D%22middle%22%3E%CE%BB%3C/text%3E%3C/svg%3E" />
       <style>
          /* ============================= TOKENS ============================= */
@@ -34,9 +34,13 @@
          --icon-python: url("data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+UHl0aG9uPC90aXRsZT48cGF0aCBkPSJNMTQuMjUuMThsLjkuMi43My4yNi41OS4zLjQ1LjMyLjM0LjM0LjI1LjM0LjE2LjMzLjEuMy4wNC4yNi4wMi4yLS4wMS4xM1Y4LjVsLS4wNS42My0uMTMuNTUtLjIxLjQ2LS4yNi4zOC0uMy4zMS0uMzMuMjUtLjM1LjE5LS4zNS4xNC0uMzMuMS0uMy4wNy0uMjYuMDQtLjIxLjAySDguNzdsLS42OS4wNS0uNTkuMTQtLjUuMjItLjQxLjI3LS4zMy4zMi0uMjcuMzUtLjIuMzYtLjE1LjM3LS4xLjM1LS4wNy4zMi0uMDQuMjctLjAyLjIxdjMuMDZIMy4xN2wtLjIxLS4wMy0uMjgtLjA3LS4zMi0uMTItLjM1LS4xOC0uMzYtLjI2LS4zNi0uMzYtLjM1LS40Ni0uMzItLjU5LS4yOC0uNzMtLjIxLS44OC0uMTQtMS4wNS0uMDUtMS4yMy4wNi0xLjIyLjE2LTEuMDQuMjQtLjg3LjMyLS43MS4zNi0uNTcuNC0uNDQuNDItLjMzLjQyLS4yNC40LS4xNi4zNi0uMS4zMi0uMDUuMjQtLjAxaC4xNmwuMDYuMDFoOC4xNnYtLjgzSDYuMThsLS4wMS0yLjc1LS4wMi0uMzcuMDUtLjM0LjExLS4zMS4xNy0uMjguMjUtLjI2LjMxLS4yMy4zOC0uMi40NC0uMTguNTEtLjE1LjU4LS4xMi42NC0uMS43MS0uMDYuNzctLjA0Ljg0LS4wMiAxLjI3LjA1em0tNi4zIDEuOThsLS4yMy4zMy0uMDguNDEuMDguNDEuMjMuMzQuMzMuMjIuNDEuMDkuNDEtLjA5LjMzLS4yMi4yMy0uMzQuMDgtLjQxLS4wOC0uNDEtLjIzLS4zMy0uMzMtLjIyLS40MS0uMDktLjQxLjA5em0xMy4wOSAzLjk1bC4yOC4wNi4zMi4xMi4zNS4xOC4zNi4yNy4zNi4zNS4zNS40Ny4zMi41OS4yOC43My4yMS44OC4xNCAxLjA0LjA1IDEuMjMtLjA2IDEuMjMtLjE2IDEuMDQtLjI0Ljg2LS4zMi43MS0uMzYuNTctLjQuNDUtLjQyLjMzLS40Mi4yNC0uNC4xNi0uMzYuMDktLjMyLjA1LS4yNC4wMi0uMTYtLjAxaC04LjIydi44Mmg1Ljg0bC4wMSAyLjc2LjAyLjM2LS4wNS4zNC0uMTEuMzEtLjE3LjI5LS4yNS4yNS0uMzEuMjQtLjM4LjItLjQ0LjE3LS41MS4xNS0uNTguMTMtLjY0LjA5LS43MS4wNy0uNzcuMDQtLjg0LjAxLTEuMjctLjA0LTEuMDctLjE0LS45LS4yLS43My0uMjUtLjU5LS4zLS40NS0uMzMtLjM0LS4zNC0uMjUtLjM0LS4xNi0uMzMtLjEtLjMtLjA0LS4yNS0uMDItLjIuMDEtLjEzdi01LjM0bC4wNS0uNjQuMTMtLjU0LjIxLS40Ni4yNi0uMzguMy0uMzIuMzMtLjI0LjM1LS4yLjM1LS4xNC4zMy0uMS4zLS4wNi4yNi0uMDQuMjEtLjAyLjEzLS4wMWg1Ljg0bC42OS0uMDUuNTktLjE0LjUtLjIxLjQxLS4yOC4zMy0uMzIuMjctLjM1LjItLjM2LjE1LS4zNi4xLS4zNS4wNy0uMzIuMDQtLjI4LjAyLS4yMVY2LjA3aDIuMDlsLjE0LjAxem0tNi40NyAxNC4yNWwtLjIzLjMzLS4wOC40MS4wOC40MS4yMy4zMy4zMy4yMy40MS4wOC40MS0uMDguMzMtLjIzLjIzLS4zMy4wOC0uNDEtLjA4LS40MS0uMjMtLjMzLS4zMy0uMjMtLjQxLS4wOC0uNDEuMDh6Ii8+PC9zdmc+");
          --icon-node: url("data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+Tm9kZS5qczwvdGl0bGU+PHBhdGggZD0iTTExLjk5OCwyNGMtMC4zMjEsMC0wLjY0MS0wLjA4NC0wLjkyMi0wLjI0N2wtMi45MzYtMS43MzdjLTAuNDM4LTAuMjQ1LTAuMjI0LTAuMzMyLTAuMDgtMC4zODMgYzAuNTg1LTAuMjAzLDAuNzAzLTAuMjUsMS4zMjgtMC42MDRjMC4wNjUtMC4wMzcsMC4xNTEtMC4wMjMsMC4yMTgsMC4wMTdsMi4yNTYsMS4zMzljMC4wODIsMC4wNDUsMC4xOTcsMC4wNDUsMC4yNzIsMGw4Ljc5NS01LjA3NiBjMC4wODItMC4wNDcsMC4xMzQtMC4xNDEsMC4xMzQtMC4yMzhWNi45MjFjMC0wLjA5OS0wLjA1My0wLjE5Mi0wLjEzNy0wLjI0MmwtOC43OTEtNS4wNzJjLTAuMDgxLTAuMDQ3LTAuMTg5LTAuMDQ3LTAuMjcxLDAgTDMuMDc1LDYuNjhDMi45OSw2LjcyOSwyLjkzNiw2LjgyNSwyLjkzNiw2LjkyMXYxMC4xNWMwLDAuMDk3LDAuMDU0LDAuMTg5LDAuMTM5LDAuMjM1bDIuNDA5LDEuMzkyIGMxLjMwNywwLjY1NCwyLjEwOC0wLjExNiwyLjEwOC0wLjg5VjcuNzg3YzAtMC4xNDIsMC4xMTQtMC4yNTMsMC4yNTYtMC4yNTNoMS4xMTVjMC4xMzksMCwwLjI1NSwwLjExMiwwLjI1NSwwLjI1M3YxMC4wMjEgYzAsMS43NDUtMC45NSwyLjc0NS0yLjYwNCwyLjc0NWMtMC41MDgsMC0wLjkwOSwwLTIuMDI2LTAuNTUxTDIuMjgsMTguNjc1Yy0wLjU3LTAuMzI5LTAuOTIyLTAuOTQ1LTAuOTIyLTEuNjA0VjYuOTIxIGMwLTAuNjU5LDAuMzUzLTEuMjc1LDAuOTIyLTEuNjAzbDguNzk1LTUuMDgyYzAuNTU3LTAuMzE1LDEuMjk2LTAuMzE1LDEuODQ4LDBsOC43OTQsNS4wODJjMC41NywwLjMyOSwwLjkyNCwwLjk0NCwwLjkyNCwxLjYwMyB2MTAuMTVjMCwwLjY1OS0wLjM1NCwxLjI3My0wLjkyNCwxLjYwNGwtOC43OTQsNS4wNzhDMTIuNjQzLDIzLjkxNiwxMi4zMjQsMjQsMTEuOTk4LDI0eiBNMTkuMDk5LDEzLjk5MyBjMC0xLjktMS4yODQtMi40MDYtMy45ODctMi43NjNjLTIuNzMxLTAuMzYxLTMuMDA5LTAuNTQ4LTMuMDA5LTEuMTg3YzAtMC41MjgsMC4yMzUtMS4yMzMsMi4yNTgtMS4yMzMgYzEuODA3LDAsMi40NzMsMC4zODksMi43NDcsMS42MDdjMC4wMjQsMC4xMTUsMC4xMjksMC4xOTksMC4yNDcsMC4xOTloMS4xNDFjMC4wNzEsMCwwLjEzOC0wLjAzMSwwLjE4Ni0wLjA4MSBjMC4wNDgtMC4wNTQsMC4wNzQtMC4xMjMsMC4wNjctMC4xOTZjLTAuMTc3LTIuMDk4LTEuNTcxLTMuMDc2LTQuMzg4LTMuMDc2Yy0yLjUwOCwwLTQuMDA0LDEuMDU4LTQuMDA0LDIuODMzIGMwLDEuOTI1LDEuNDg4LDIuNDU3LDMuODk1LDIuNjk1YzIuODgsMC4yODIsMy4xMDMsMC43MDMsMy4xMDMsMS4yNjljMCwwLjk4My0wLjc4OSwxLjQwMi0yLjY0MiwxLjQwMiBjLTIuMzI3LDAtMi44MzktMC41ODQtMy4wMTEtMS43NDJjLTAuMDItMC4xMjQtMC4xMjYtMC4yMTUtMC4yNTMtMC4yMTVoLTEuMTM3Yy0wLjE0MSwwLTAuMjU0LDAuMTEyLTAuMjU0LDAuMjUzIGMwLDEuNDgyLDAuODA2LDMuMjQ4LDQuNjU1LDMuMjQ4QzE3LjUwMSwxNy4wMDcsMTkuMDk5LDE1LjkxLDE5LjA5OSwxMy45OTN6Ii8+PC9zdmc+");
          --icon-java: url("data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+SmF2YTwvdGl0bGU+PHBhdGggZD0iTTguODUxIDE4LjU2cy0uOTE3LjUzNC42NTMuNzE0YzEuOTAyLjIxOCAyLjg3NC4xODcgNC45NjktLjIxMSAwIDAgLjU1Mi4zNDYgMS4zMjEuNjQ2LTQuNjk5IDIuMDEzLTEwLjYzMy0uMTE4LTYuOTQzLTEuMTQ5TTguMjc2IDE1LjkzM3MtMS4wMjguNzYxLjU0Mi45MjRjMi4wMzIuMjA5IDMuNjM2LjIyNyA2LjQxMy0uMzA4IDAgMCAuMzg0LjM4OS45ODcuNjAyLTUuNjc5IDEuNjYxLTEyLjAwNy4xMy03Ljk0Mi0xLjIxOE0xMy4xMTYgMTEuNDc1YzEuMTU4IDEuMzMzLS4zMDQgMi41MzMtLjMwNCAyLjUzM3MyLjkzOS0xLjUxOCAxLjU4OS0zLjQxOGMtMS4yNjEtMS43NzItMi4yMjgtMi42NTIgMy4wMDctNS42ODggMC0uMDAxLTguMjE2IDIuMDUxLTQuMjkyIDYuNTczTTE5LjMzIDIwLjUwNHMuNjc5LjU1OS0uNzQ3Ljk5MWMtMi43MTIuODIyLTExLjI4OCAxLjA2OS0xMy42NjkuMDMzLS44NTYtLjM3My43NS0uODkgMS4yNTQtLjk5OC41MjctLjExNC44MjgtLjA5My44MjgtLjA5My0uOTUzLS42NzEtNi4xNTYgMS4zMTctMi42NDMgMS44ODcgOS41OCAxLjU1MyAxNy40NjItLjcgMTQuOTc3LTEuODJNOS4yOTIgMTMuMjFzLTQuMzYyIDEuMDM2LTEuNTQ0IDEuNDEyYzEuMTg5LjE1OSAzLjU2MS4xMjMgNS43Ny0uMDYyIDEuODA2LS4xNTIgMy42MTgtLjQ3NyAzLjYxOC0uNDc3cy0uNjM3LjI3Mi0xLjA5OC41ODdjLTQuNDI5IDEuMTY1LTEyLjk4Ni42MjMtMTAuNTIyLS41NjggMi4wODItMS4wMDYgMy43NzYtLjg5MiAzLjc3Ni0uODkyTTE3LjExNiAxNy41ODRjNC41MDMtMi4zNCAyLjQyMS00LjU4OS45NjgtNC4yODUtLjM1NS4wNzQtLjUxNS4xMzgtLjUxNS4xMzhzLjEzMi0uMjA3LjM4NS0uMjk3YzIuODc1LTEuMDExIDUuMDg2IDIuOTgxLS45MjggNC41NjIgMC0uMDAxLjA3LS4wNjIuMDktLjExOE0xNC40MDEgMHMyLjQ5NCAyLjQ5NC0yLjM2NSA2LjMzYy0zLjg5NiAzLjA3Ny0uODg4IDQuODMyLS4wMDEgNi44MzYtMi4yNzQtMi4wNTMtMy45NDMtMy44NTgtMi44MjQtNS41MzkgMS42NDQtMi40NjkgNi4xOTctMy42NjUgNS4xOS03LjYyN005LjczNCAyMy45MjRjNC4zMjIuMjc3IDEwLjk1OS0uMTUzIDExLjExNi0yLjE5OCAwIDAtLjMwMi43NzUtMy41NzIgMS4zOTEtMy42ODguNjk0LTguMjM5LjYxMy0xMC45MzcuMTY4IDAtLjAwMS41NTMuNDU3IDMuMzkzLjYzOSIvPjwvc3ZnPg==");
+         --icon-go: url("data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+R288L3RpdGxlPjxwYXRoIGQ9Ik0xLjgxMSAxMC4yMzFjLS4wNDcgMC0uMDU4LS4wMjMtLjAzNS0uMDU5bC4yNDYtLjMxNWMuMDIzLS4wMzUuMDgxLS4wNTguMTI4LS4wNThoNC4xNzJjLjA0NiAwIC4wNTguMDM1LjAzNS4wN2wtLjE5OS4zMDNjLS4wMjMuMDM2LS4wODIuMDctLjExNy4wN3pNLjA0NyAxMS4zMDZjLS4wNDcgMC0uMDU5LS4wMjMtLjAzNS0uMDU4bC4yNDUtLjMxNmMuMDIzLS4wMzUuMDgyLS4wNTguMTI5LS4wNThoNS4zMjhjLjA0NyAwIC4wNy4wMzUuMDU4LjA3bC0uMDkzLjI4Yy0uMDEyLjA0Ny0uMDU4LjA3LS4xMDUuMDd6bTIuODI4IDEuMDc1Yy0uMDQ3IDAtLjA1OS0uMDM1LS4wMzUtLjA3bC4xNjMtLjI5MmMuMDIzLS4wMzUuMDctLjA3LjExNy0uMDdoMi4zMzdjLjA0NyAwIC4wNy4wMzUuMDcuMDgybC0uMDIzLjI4YzAgLjA0Ny0uMDQ3LjA4Mi0uMDgyLjA4MnptMTIuMTI5LTIuMzZjLS43MzYuMTg3LTEuMjM5LjMyNy0xLjk2My41MTQtLjE3Ni4wNDYtLjE4Ny4wNTgtLjM0LS4xMTctLjE3NC0uMTk5LS4zMDMtLjMyNy0uNTQ4LS40NDQtLjczNy0uMzYyLTEuNDUtLjI1Ny0yLjExNS4xNzUtLjc5NS41MTQtMS4yMDQgMS4yNzQtMS4xOTIgMi4yMi4wMTEuOTM1LjY1NCAxLjcwNiAxLjU3NyAxLjgzNS43OTUuMTA1IDEuNDYtLjE3NSAxLjk4Ny0uNzcuMTA1LS4xMy4xOTgtLjI3LjMxNS0uNDM0SDEwLjQ3Yy0uMjQ1IDAtLjMwNC0uMTUyLS4yMjItLjM1LjE1Mi0uMzYyLjQzMi0uOTcuNTk2LTEuMjc0YS4zMTUuMzE1IDAgMDEuMjkyLS4xODdoNC4yNTNjLS4wMjMuMzE2LS4wMjMuNjMxLS4wNy45NDdhNC45ODMgNC45ODMgMCAwMS0uOTU4IDIuMjljLS44NDEgMS4xMS0xLjk0IDEuOC0zLjMzIDEuOTg2LTEuMTQ1LjE1Mi0yLjIwOS0uMDctMy4xNDMtLjc3LS44NjUtLjY1NS0xLjM1Ni0xLjUyLTEuNDg0LTIuNTk1LS4xNTItMS4yNzQuMjIyLTIuNDE5Ljk5My0zLjQyNC44My0xLjA4NiAxLjkyOC0xLjc3NiAzLjI3Mi0yLjAyIDEuMDk4LS4yIDIuMTUtLjA3IDMuMDk2LjU3MS42Mi40MSAxLjA2My45NyAxLjM1NiAxLjY0OC4wNy4xMDUuMDIzLjE2NC0uMTE3LjJtMy44NjggNi40NjFjLTEuMDY0LS4wMjQtMi4wMzQtLjMyOC0yLjg1Mi0xLjAyOWEzLjY2NSAzLjY2NSAwIDAxLTEuMjYyLTIuMjU1Yy0uMjEtMS4zMi4xNTItMi40ODkuOTQ3LTMuNTI5Ljg1My0xLjEyMiAxLjg4MS0xLjcwNiAzLjI3Mi0xLjk1IDEuMTkyLS4yMSAyLjMxNC0uMDk1IDMuMzMuNTk1LjkyMy42MyAxLjQ5NiAxLjQ4NCAxLjY0OCAyLjYwNS4xOTggMS41NzgtLjI1NyAyLjg2My0xLjM0NCAzLjk2Mi0uNzcxLjc4My0xLjcxOCAxLjI3My0yLjgwNSAxLjQ5NS0uMzE1LjA2LS42My4wNy0uOTM0LjEwNnptMi43OC00LjcyYy0uMDExLS4xNTMtLjAxMS0uMjctLjAzNC0uMzg3LS4yMS0xLjE1Ny0xLjI3NC0xLjgxLTIuMzg0LTEuNTU0LTEuMDg3LjI0NS0xLjc4OC45MzUtMi4wNDUgMi4wMzMtLjIxLjkxMi4yMzQgMS44MzUgMS4wNzUgMi4yMS42NDMuMjggMS4yODUuMjQ0IDEuOTA1LS4wNy45MjMtLjQ4IDEuNDI1LTEuMjI4IDEuNDg0LTIuMjMzeiIvPjwvc3ZnPg==");
+         --icon-php: url("data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+UEhQPC90aXRsZT48cGF0aCBkPSJNNy4wMSAxMC4yMDdoLS45NDRsLS41MTUgMi42NDhoLjgzOGMuNTU2IDAgLjk3LS4xMDUgMS4yNDItLjMxNC4yNzItLjIxLjQ1NS0uNTU5LjU1LTEuMDQ5LjA5Mi0uNDcuMDUtLjgwMi0uMTI0LS45OTUtLjE3NS0uMTkzLS41MjMtLjI5LTEuMDQ3LS4yOXpNMTIgNS42ODhDNS4zNzMgNS42ODggMCA4LjUxNCAwIDEyczUuMzczIDYuMzEzIDEyIDYuMzEzUzI0IDE1LjQ4NiAyNCAxMmMwLTMuNDg2LTUuMzczLTYuMzEyLTEyLTYuMzEyem0tMy4yNiA3LjQ1MWMtLjI2MS4yNS0uNTc1LjQzOC0uOTE3LjU1MS0uMzM2LjEwOC0uNzY1LjE2NC0xLjI4NS4xNjRINS4zNTdsLS4zMjcgMS42ODFIMy42NTJsMS4yMy02LjMyNmgyLjY1Yy43OTcgMCAxLjM3OC4yMDkgMS43NDQuNjI4LjM2Ni40MTguNDc2IDEuMDAyLjMzIDEuNzUyYTIuODM2IDIuODM2IDAgMCAxLS4zMDUuODQ3Yy0uMTQzLjI1NS0uMzMuNDktLjU2MS43MDN6bTQuMDI0LjcxNWwuNTQzLTIuNzk5Yy4wNjMtLjMxOC4wMzktLjUzNi0uMDY4LS42NTEtLjEwNy0uMTE2LS4zMzYtLjE3NC0uNjg3LS4xNzRIMTEuNDZsLS43MDQgMy42MjVIOS4zODhsMS4yMy02LjMyN2gxLjM2N2wtLjMyNyAxLjY4MmgxLjIxOGMuNzY3IDAgMS4yOTUuMTM0IDEuNTg2LjQwMXMuMzc4LjcuMjYzIDEuMjk5bC0uNTcyIDIuOTQ0aC0xLjM4OXptNy41OTctMi4yNjVhMi43ODIgMi43ODIgMCAwIDEtLjMwNS44NDdjLS4xNDMuMjU1LS4zMy40OS0uNTYxLjcwM2EyLjQ0IDIuNDQgMCAwIDEtLjkxNy41NTFjLS4zMzYuMTA4LS43NjUuMTY0LTEuMjg2LjE2NGgtMS4xOGwtLjMyNyAxLjY4MmgtMS4zNzhsMS4yMy02LjMyNmgyLjY0OWMuNzk3IDAgMS4zNzguMjA5IDEuNzQ0LjYyOC4zNjYuNDE3LjQ3NyAxLjAwMS4zMzEgMS43NTF6TTE3Ljc2NiAxMC4yMDdoLS45NDNsLS41MTYgMi42NDhoLjgzOGMuNTU3IDAgLjk3MS0uMTA1IDEuMjQyLS4zMTQuMjcyLS4yMS40NTUtLjU1OS41NTEtMS4wNDkuMDkyLS40Ny4wNDktLjgwMi0uMTI1LS45OTVzLS41MjQtLjI5LTEuMDQ3LS4yOXoiLz48L3N2Zz4=");
          --lang-python:#3776ab; --lang-python-soft:rgba(55,118,171,0.12);
          --lang-java:#e76f00; --lang-java-soft:rgba(231,111,0,0.12);
          --lang-node:#339933; --lang-node-soft:rgba(51,153,51,0.12);
+         --lang-go:#00add8; --lang-go-soft:rgba(0,173,216,0.12);
+         --lang-php:#777bb4; --lang-php-soft:rgba(119,123,180,0.12);
          }
          @media (prefers-color-scheme: dark){
          :root{
@@ -268,6 +272,8 @@
          .lang-glyph-python{ mask-image:var(--icon-python); -webkit-mask-image:var(--icon-python); }
          .lang-glyph-java{ mask-image:var(--icon-java); -webkit-mask-image:var(--icon-java); }
          .lang-glyph-node{ mask-image:var(--icon-node); -webkit-mask-image:var(--icon-node); }
+         .lang-glyph-go{ mask-image:var(--icon-go); -webkit-mask-image:var(--icon-go); }
+         .lang-glyph-php{ mask-image:var(--icon-php); -webkit-mask-image:var(--icon-php); }
          .pill .lang-glyph{ margin-right:.45em; vertical-align:-2px; }
          .lang-badges{ display:flex; flex-wrap:wrap; gap:.6em; margin-top:var(--space-6); }
          .lang-badge{
@@ -282,6 +288,10 @@
          .lang-badge-java .lang-glyph{ color:var(--lang-java); }
          .lang-badge-node{ border-color:var(--lang-node); background:var(--lang-node-soft); }
          .lang-badge-node .lang-glyph{ color:var(--lang-node); }
+         .lang-badge-go{ border-color:var(--lang-go); background:var(--lang-go-soft); }
+         .lang-badge-go .lang-glyph{ color:var(--lang-go); }
+         .lang-badge-php{ border-color:var(--lang-php); background:var(--lang-php-soft); }
+         .lang-badge-php .lang-glyph{ color:var(--lang-php); }
          .lang-badge-more{ color:var(--text-dim); border-style:dashed; }
          /* ============================= API GROUPS ============================= */
          .api-group{ margin-bottom:var(--space-12); }
@@ -380,6 +390,8 @@
                         <span class="lang-badge lang-badge-python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</span>
                         <span class="lang-badge lang-badge-java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</span>
                         <span class="lang-badge lang-badge-node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</span>
+                        <span class="lang-badge lang-badge-go"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>Go</span>
+                        <span class="lang-badge lang-badge-php"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>PHP</span>
                         <span class="lang-badge lang-badge-more">+ more coming</span>
                      </div>
                      <div class="hero-ctas">
@@ -392,6 +404,8 @@
                            <button class="pill install-pill" data-install="gradle"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Gradle</button>
                            <button class="pill install-pill" data-install="maven"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Maven</button>
                            <button class="pill install-pill" data-install="npm"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>npm</button>
+                           <button class="pill install-pill" data-install="goget"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>go get</button>
+                           <button class="pill install-pill" data-install="composer"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>Composer</button>
                         </div>
                         <div class="install-panes">
                            <div class="snippet install-snippet">
@@ -414,6 +428,12 @@
                               </div>
                               <div class="snippet-pane" data-install-pane="npm">
                                  <pre><code data-syntax="bash">npm install lytecache</code></pre>
+                              </div>
+                              <div class="snippet-pane" data-install-pane="goget">
+                                 <pre><code data-syntax="bash">go get github.com/lytecache/lytecache-go</code></pre>
+                              </div>
+                              <div class="snippet-pane" data-install-pane="composer">
+                                 <pre><code data-syntax="bash">composer require lytecache/lytecache</code></pre>
                               </div>
                            </div>
                            <div class="snippet install-snippet lang-group">
@@ -442,6 +462,20 @@ try (LyteCache cache = new LyteCache()) {
 const cache = new LyteCache();
 cache.set("hits", 0);
 cache.incr("hits");</code></pre>
+                              </div>
+                              <div class="snippet-pane" data-lang="go">
+                                 <pre><code data-syntax="go">cache, _ := lytecache.New()
+defer cache.Close()
+
+cache.Set("hits", 0)
+cache.Incr("hits", 1)</code></pre>
+                              </div>
+                              <div class="snippet-pane" data-lang="php">
+                                 <pre><code data-syntax="php">use Lytecache\LyteCache;
+
+$cache = new LyteCache();
+$cache->set("hits", 0);
+$cache->incr("hits");</code></pre>
                               </div>
                            </div>
                         </div>
@@ -487,6 +521,8 @@ cache.incr("hits");</code></pre>
                         <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
                         <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
                         <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
+                        <button class="pill lang-btn" data-lang-btn="go"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>Go</button>
+                        <button class="pill lang-btn" data-lang-btn="php"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>PHP</button>
                      </div>
                      <button class="copy-btn" data-copy>Copy</button>
                   </div>
@@ -516,13 +552,30 @@ cache.set("user:42", { name: "Ada" }, { ttl: 300 });
 cache.get("user:42");                        // { name: "Ada" }
 cache.incr("hits");                          // 1</code></pre>
                   </div>
+                  <div class="snippet-pane" data-lang="go">
+                     <pre><code data-syntax="go">cache, _ := lytecache.New()          // no path, no setup -- just works
+defer cache.Close()
+
+cache.Set("user:42", map[string]any{"name": "Ada"}, lytecache.TTL(5*time.Minute))
+var user map[string]any
+cache.Get("user:42", &amp;user)                // {"name": "Ada"}
+cache.Incr("hits", 1)                        // 1</code></pre>
+                  </div>
+                  <div class="snippet-pane" data-lang="php">
+                     <pre><code data-syntax="php">use Lytecache\LyteCache;
+
+$cache = new LyteCache();               // no path, no setup -- just works
+$cache->set("user:42", ["name" => "Ada"], ttl: 300);
+$cache->get("user:42");                 // ["name" => "Ada"]
+$cache->incr("hits");                   // 1</code></pre>
+                  </div>
                </div>
-               <p>All three are disposable: <code>with LyteCache() as cache:</code> in Python, <code>try (LyteCache cache = new LyteCache())</code> in Java, <code>using cache = new LyteCache()</code> in Node.js (or call <code>cache[Symbol.dispose]()</code> directly). Closing flushes any buffered state and stops the background sweeper cleanly.</p>
+               <p>All five are disposable: <code>with LyteCache() as cache:</code> in Python, <code>try (LyteCache cache = new LyteCache())</code> in Java, <code>using cache = new LyteCache()</code> in Node.js (or call <code>cache[Symbol.dispose]()</code> directly), <code>defer cache.Close()</code> in Go, and PHP's <code>__destruct()</code> flushes and closes automatically even if you never call <code>$cache-&gt;close()</code> yourself. Closing flushes any buffered state and stops the background sweeper cleanly (PHP has no background sweeper -- see <a href="#ttl">TTL &amp; expiration</a>).</p>
             </section>
             <section class="section" id="where-is-my-data">
                <p class="eyebrow">Overview</p>
                <h2>Where is my data?</h2>
-               <p class="lead">By default, every implementation resolves the exact same file for the same project — so a Python process, a Java process, and a Node.js process started from the same directory all share one cache automatically.</p>
+               <p class="lead">By default, every implementation resolves the exact same file for the same project — so a Python, Java, Node.js, Go, or PHP process started from the same directory all share one cache automatically.</p>
                <pre class="path-example">&lt;platform cache dir&gt;/lytecache/&lt;project-id&gt;.db</pre>
                <div class="table-wrap">
                   <table>
@@ -551,10 +604,11 @@ cache.incr("hits");                          // 1</code></pre>
                <p><code>&lt;project-id&gt;</code> is the first 12 hex characters of the SHA-256 hash of your current working directory's resolved, absolute path — an identical derivation in every implementation, so every project gets its own file and nothing is left behind in your repo. (See the <a href="#glossary">glossary</a> if "SHA-256" is new to you.)</p>
                <h3>Overriding it</h3>
                <ul>
-                  <li>Pass an explicit path — <code>LyteCache("/data/cache.db")</code> in Python, <code>.path(Path.of("/data/cache.db"))</code> on the Java builder, <code>new LyteCache({ path: "/data/cache.db" })</code> in Node.js.</li>
+                  <li>Pass an explicit path — <code>LyteCache("/data/cache.db")</code> in Python, <code>.path(Path.of("/data/cache.db"))</code> on the Java builder, <code>new LyteCache({ path: "/data/cache.db" })</code> in Node.js, <code>lytecache.WithPath("/data/cache.db")</code> in Go, <code>new LyteCache(path: "/data/cache.db")</code> in PHP.</li>
                   <li>Set <code>LYTECACHE_PATH=/data/cache.db</code> in the environment — takes priority over the default in every language.</li>
                </ul>
-               <p>Introspect it programmatically: <code>LyteCache.default_path()</code> / <code>cache.path</code> in Python, <code>LyteCache.defaultPath()</code> / <code>cache.path()</code> in Java, <code>LyteCache.defaultPath()</code> / <code>cache.path</code> in Node.js. The file is never a mystery.</p>
+               <p>Introspect it programmatically: <code>LyteCache.default_path()</code> / <code>cache.path</code> in Python, <code>LyteCache.defaultPath()</code> / <code>cache.path()</code> in Java, <code>LyteCache.defaultPath()</code> / <code>cache.path</code> in Node.js, <code>lytecache.DefaultPath()</code> / <code>cache.Path()</code> in Go, <code>LyteCache::defaultPath()</code> / <code>$cache-&gt;path()</code> in PHP. The file is never a mystery.</p>
+               <p>Laravel is the one exception: its cache driver defaults to <code>storage_path('framework/cache/lytecache.db')</code> instead of the platform cache directory above, since that's where a Laravel app expects its cache files to live — configurable in <code>config/cache.php</code>'s <code>stores.lytecache.path</code>.</p>
             </section>
             <section class="section" id="ttl">
                <p class="eyebrow">Guide</p>
@@ -562,7 +616,7 @@ cache.incr("hits");                          // 1</code></pre>
                <p class="lead">Expiration applies identically to every value type — strings, numbers, dataclasses, dicts, POJOs, records. There's nothing special about storing an object.</p>
                <div class="callout">
                   <p class="eyebrow">Watch the units</p>
-                  <p><strong>Python's and Node.js's <code>ttl</code> are both plain numbers, in seconds</strong> (a <code>float</code> in Python, a <code>number</code> in Node). <code>ttl=5000</code> / <code>{ ttl: 5000 }</code> means "expire in 5000 seconds" (~83 minutes), not 5 seconds — the most common reason a key seems to "never expire." <strong>Java's is an explicit <code>Duration</code></strong> (<code>Duration.ofSeconds(5)</code> vs. <code>Duration.ofMillis(5)</code>), so there's no unit ambiguity there.</p>
+                  <p><strong>Python's, Node.js's, and PHP's <code>ttl</code> are all plain numbers, in seconds</strong> (a <code>float</code> in Python and PHP, a <code>number</code> in Node). <code>ttl=5000</code> / <code>{ ttl: 5000 }</code> means "expire in 5000 seconds" (~83 minutes), not 5 seconds — the most common reason a key seems to "never expire." <strong>Java's and Go's are explicit</strong> (a Java <code>Duration</code>, a Go <code>time.Duration</code>), so there's no unit ambiguity there.</p>
                </div>
                <div class="snippet lang-group">
                   <div class="snippet-head">
@@ -570,6 +624,8 @@ cache.incr("hits");                          // 1</code></pre>
                         <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
                         <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
                         <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
+                        <button class="pill lang-btn" data-lang-btn="go"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>Go</button>
+                        <button class="pill lang-btn" data-lang-btn="php"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>PHP</button>
                      </div>
                      <button class="copy-btn" data-copy>Copy</button>
                   </div>
@@ -610,12 +666,36 @@ cache.expire("session", 60);   // overwrite the TTL: now expires in 60s
 cache.persist("session");      // remove the TTL entirely
 cache.touch("session", 300);   // sliding expiration: refresh back to 300s</code></pre>
                   </div>
+                  <div class="snippet-pane" data-lang="go">
+                     <pre><code data-syntax="go">cache.Set("session", 42, lytecache.TTL(5*time.Minute))   // expires in 5 min
+cache.Set("otp", "123456", lytecache.TTL(500*time.Millisecond))
+
+_, hasExpiry, found, _ := cache.TTLOf("session")   // remaining time.Duration
+_, hasExpiry, found, _ = cache.TTLOf("permanent")  // hasExpiry=false if no TTL
+_, _, found, _ = cache.TTLOf("missing")            // found=false if the key doesn't exist
+
+cache.Expire("session", 60*time.Second)  // overwrite the TTL
+cache.Persist("session")                 // remove the TTL entirely
+cache.Touch("session", 5*time.Minute)    // sliding expiration: refresh back to 5 min</code></pre>
+                  </div>
+                  <div class="snippet-pane" data-lang="php">
+                     <pre><code data-syntax="php">$cache->set("session", ["user_id" => 42], ttl: 300);   // expires in 300s (5 min)
+$cache->set("otp", "123456", ttl: 0.5);                // expires in 500ms
+
+$cache->ttl("session");        // seconds remaining, e.g. 298.7
+$cache->ttl("permanent_key");  // -1 if no TTL was set
+$cache->ttl("missing");        // null if the key doesn't exist
+
+$cache->expire("session", 60);   // overwrite the TTL: now expires in 60s
+$cache->persist("session");      // remove the TTL entirely
+$cache->touch("session", 300);   // sliding expiration: refresh back to 300s</code></pre>
+                  </div>
                </div>
                <h3>Lazy and active expiration</h3>
                <p>Expiration is enforced two ways, in every implementation:</p>
                <ul>
-                  <li><strong>Lazily</strong>, on every read (<code>get</code> / <code>exists</code> / <code>getAll</code> / <code>getMany</code>): an expired row is treated as a miss and deleted on the spot, even with the background sweeper disabled.</li>
-                  <li><strong>Actively</strong>, by a background sweeper (a thread in Python/Java, a <code>setInterval</code> timer in Node.js) that runs every <code>sweep_interval</code> / <code>sweepInterval</code> (default 60s) and deletes expired rows in batches, so disk isn't held by dead keys even if nothing ever reads them again.</li>
+                  <li><strong>Lazily</strong>, on every read (<code>get</code> / <code>exists</code> / <code>getAll</code> / <code>getMany</code> / <code>TTLOf</code>): an expired row is treated as a miss and deleted on the spot, even with the background sweeper disabled.</li>
+                  <li><strong>Actively</strong>, by a background sweeper (a thread in Python/Java, a <code>setInterval</code> timer in Node.js, a goroutine in Go) that runs every <code>sweep_interval</code> / <code>sweepInterval</code> / <code>WithSweepInterval</code> (default 60s) and deletes expired rows in batches, so disk isn't held by dead keys even if nothing ever reads them again. PHP has no background threads, so instead it runs bounded maintenance passes opportunistically (roughly every 100 operations, throttled by <code>sweepInterval</code>) — Laravel apps should also schedule the <code>lytecache:maintain</code> artisan command so a quiet cache still gets swept.</li>
                </ul>
                <p>If you inspect the <code>.db</code> file directly (a SQLite browser, say) moments after a key expires but before the next sweep tick, the row may still be physically present — that's expected. <code>get()</code>/<code>exists()</code> already treat it as gone. Lower the sweep interval, or call <code>vacuum()</code>, if you need the file to shrink sooner.</p>
             </section>
@@ -628,6 +708,8 @@ cache.touch("session", 300);   // sliding expiration: refresh back to 300s</code
                         <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
                         <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
                         <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
+                        <button class="pill lang-btn" data-lang-btn="go"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>Go</button>
+                        <button class="pill lang-btn" data-lang-btn="php"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>PHP</button>
                      </div>
                      <button class="copy-btn" data-copy>Copy</button>
                   </div>
@@ -643,6 +725,14 @@ cache.flush();                  // delete EVERYTHING in the current namespace</c
                      <pre><code data-syntax="typescript">cache.delete("key1", "key2");   // delete specific keys; returns how many existed
 cache.flush();                  // delete EVERYTHING in the current namespace</code></pre>
                   </div>
+                  <div class="snippet-pane" data-lang="go">
+                     <pre><code data-syntax="go">cache.Delete("key1", "key2")   // delete specific keys; returns how many existed
+cache.Flush()                  // delete EVERYTHING in the current namespace</code></pre>
+                  </div>
+                  <div class="snippet-pane" data-lang="php">
+                     <pre><code data-syntax="php">$cache->delete("key1", "key2");   // delete specific keys; returns how many existed
+$cache->flush();                  // delete EVERYTHING in the current namespace</code></pre>
+                  </div>
                </div>
                <p><code>flush()</code> takes no key or pattern argument by design — it always clears the entire namespace (the default namespace, unless you configured a different one). To clear a subset, delete by key or by pattern instead:</p>
                <div class="snippet lang-group">
@@ -651,6 +741,8 @@ cache.flush();                  // delete EVERYTHING in the current namespace</c
                         <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
                         <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
                         <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
+                        <button class="pill lang-btn" data-lang-btn="go"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>Go</button>
+                        <button class="pill lang-btn" data-lang-btn="php"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>PHP</button>
                      </div>
                      <button class="copy-btn" data-copy>Copy</button>
                   </div>
@@ -663,6 +755,16 @@ cache.delete(key)</code></pre>
                   </div>
                   <div class="snippet-pane" data-lang="node">
                      <pre><code data-syntax="typescript">for (const key of cache.keys("session:*")) cache.delete(key);</code></pre>
+                  </div>
+                  <div class="snippet-pane" data-lang="go">
+                     <pre><code data-syntax="go">for key, _ := range cache.Keys("session:*") {
+    cache.Delete(key)
+}</code></pre>
+                  </div>
+                  <div class="snippet-pane" data-lang="php">
+                     <pre><code data-syntax="php">foreach ($cache->keys("session:*") as $key) {
+    $cache->delete($key);
+}</code></pre>
                   </div>
                </div>
                <div class="callout">
@@ -681,7 +783,8 @@ cache.delete(key)</code></pre>
                         <li>Scripts, CLIs, notebooks, small web services, background jobs, test fixtures</li>
                         <li>A cache that survives process restarts without a separate daemon</li>
                         <li>Multi-process coordination via the process-safe distributed lock</li>
-                        <li>Mixed-language systems — a Python, Java, and Node.js process can all share one cache file</li>
+                        <li>Mixed-language systems — Python, Java, Node.js, Go, and PHP processes can all share one cache file</li>
+                        <li>Laravel apps that want <code>Cache::remember()</code> and <code>Cache::lock()</code> with zero infrastructure — swap in the driver by changing one config line</li>
                      </ul>
                   </div>
                   <div class="fit-col">
@@ -705,6 +808,8 @@ cache.delete(key)</code></pre>
                         <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
                         <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
                         <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
+                        <button class="pill lang-btn" data-lang-btn="go"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>Go</button>
+                        <button class="pill lang-btn" data-lang-btn="php"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>PHP</button>
                      </div>
                      <button class="copy-btn" data-copy>Copy</button>
                   </div>
@@ -747,13 +852,39 @@ cache.delete(key)</code></pre>
   logger: console.warn,  // called on a non-strict degraded read
 });</code></pre>
                   </div>
+                  <div class="snippet-pane" data-lang="go">
+                     <pre><code data-syntax="go">cache, err := lytecache.New(
+    lytecache.WithPath("/data/cache.db"),        // optional; default: lytecache.DefaultPath()
+    lytecache.WithNamespace("sessions"),          // isolate multiple caches in one file
+    lytecache.WithMaxKeys(100_000),               // evict when exceeded (default: no limit)
+    lytecache.WithMaxBytes(256&lt;&lt;20),              // evict when exceeded (default: no limit)
+    lytecache.WithEviction(lytecache.LRU),        // LRU (default), TTLPolicy, Random, NoEviction
+    lytecache.WithSweepInterval(60*time.Second),  // 0 disables the goroutine -> opportunistic mode
+    lytecache.WithStrict(false),                  // true: return read errors instead of a miss
+)</code></pre>
+                  </div>
+                  <div class="snippet-pane" data-lang="php">
+                     <pre><code data-syntax="php">new LyteCache(
+    path: null,               // explicit file path; default: LyteCache::defaultPath()
+    namespace: "default",     // logical partition within the database file
+    maxKeys: null,            // evict when the namespace exceeds this many keys
+    maxBytes: null,           // evict when the namespace exceeds this many bytes
+    eviction: Eviction::LRU,  // LRU (default), TTL, Random, NoEviction
+    sweepInterval: 60.0,      // minimum seconds between opportunistic maintenance passes
+    strict: false,            // true: throw on internal read errors instead of a miss
+);</code></pre>
+                  </div>
                </div>
                <p><strong>Eviction policies:</strong> <code>lru</code> (default, evicts least-recently-used), <code>ttl</code> (soonest-to-expire first), <code>random</code>, and <code>noeviction</code> (rejects the write instead of evicting). <abbr title="Least Frequently Used">LFU</abbr> is a documented TODO in every implementation. Unfamiliar with an abbreviation like <abbr title="Least Recently Used">LRU</abbr>? See the <a href="#glossary">glossary</a>.</p>
+               <div class="callout">
+                  <p class="eyebrow">Laravel</p>
+                  <p>None of this is required to use lytecache from Laravel — set <code>CACHE_STORE=lytecache</code> and go. The options above are still there if you need them, in <code>config/cache.php</code>'s <code>stores.lytecache</code> (publish the stub with <code>php artisan vendor:publish --tag=lytecache-config</code>), and <code>path</code> defaults to <code>storage_path('framework/cache/lytecache.db')</code> instead of the platform cache directory.</p>
+               </div>
             </section>
             <section class="section" id="api-reference">
                <p class="eyebrow">API reference</p>
                <h2>Method reference</h2>
-               <p class="lead">Grouped by what you're trying to do. Every group below shows all three languages side by side — flip the toggle once and it stays flipped for the rest of the page.</p>
+               <p class="lead">Grouped by what you're trying to do. Every group below shows all five languages side by side — flip the toggle once and it stays flipped for the rest of the page.</p>
                <div class="api-group" id="api-set-get">
                   <h3>Set &amp; get</h3>
                   <div class="snippet lang-group">
@@ -762,6 +893,8 @@ cache.delete(key)</code></pre>
                            <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
                            <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
                            <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
+                           <button class="pill lang-btn" data-lang-btn="go"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>Go</button>
+                           <button class="pill lang-btn" data-lang-btn="php"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>PHP</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -792,6 +925,23 @@ cache.get("key", "default");     // custom default on miss
 cache.delete("key1", "key2");    // returns count actually deleted
 cache.exists("key");</code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="go">
+                        <pre><code data-syntax="go">cache.Set("key", "value")
+cache.Set("key", "value", lytecache.TTL(5*time.Minute))
+var v string
+found, _ := cache.Get("key", &amp;v)      // found=false if missing or expired
+s, found, _ := cache.GetString("key")  // typed convenience wrapper
+cache.Delete("key1", "key2")           // returns count actually deleted
+cache.Exists("key")</code></pre>
+                     </div>
+                     <div class="snippet-pane" data-lang="php">
+                        <pre><code data-syntax="php">$cache->set("key", "value");
+$cache->set("key", "value", ttl: 300);
+$cache->get("key");                 // null if missing or expired
+$cache->get("key", "default");      // custom default on miss
+$cache->delete("key1", "key2");     // returns count actually deleted
+$cache->has("key");</code></pre>
+                     </div>
                   </div>
                </div>
                <div class="api-group" id="api-objects">
@@ -803,6 +953,8 @@ cache.exists("key");</code></pre>
                            <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
                            <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
                            <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
+                           <button class="pill lang-btn" data-lang-btn="go"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>Go</button>
+                           <button class="pill lang-btn" data-lang-btn="php"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>PHP</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -839,6 +991,28 @@ cache.set("p:1", new Person("Ada", 30));
 cache.get("p:1");                             // plain object by default
 cache.get("p:1", undefined, { into: Person }); // typed: instanceof Person</code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="go">
+                        <pre><code data-syntax="go">type Person struct {
+    Name string `json:"name"`
+    Age  int    `json:"age"`
+}
+
+cache.Set("p:1", Person{Name: "Ada", Age: 30})
+var p Person
+found, _ := cache.Get("p:1", &amp;p) // typed: struct fields via encoding/json tags</code></pre>
+                     </div>
+                     <div class="snippet-pane" data-lang="php">
+                        <pre><code data-syntax="php">final class Person {
+    public function __construct(
+        public string $name,
+        public int $age,
+    ) {}
+}
+
+$cache->set("p:1", new Person("Ada", 30));
+$cache->get("p:1");                        // plain array by default
+$cache->get("p:1", class: Person::class);  // typed: Person(name: "Ada", age: 30)</code></pre>
+                     </div>
                   </div>
                </div>
                <div class="api-group" id="api-atomic">
@@ -850,6 +1024,8 @@ cache.get("p:1", undefined, { into: Person }); // typed: instanceof Person</code
                            <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
                            <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
                            <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
+                           <button class="pill lang-btn" data-lang-btn="go"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>Go</button>
+                           <button class="pill lang-btn" data-lang-btn="php"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>PHP</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -868,6 +1044,17 @@ cache.getSet("key", "new");          // atomic swap, returns the old value</code
 cache.replace("key", "value", { ttl: 60 });  // set only if present (SET XX)
 cache.getSet("key", "new");                  // atomic swap, returns the old value</code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="go">
+                        <pre><code data-syntax="go">cache.Add("key", "value", lytecache.TTL(60*time.Second))      // set only if absent (SET NX)
+cache.Replace("key", "value", lytecache.TTL(60*time.Second))  // set only if present (SET XX)
+var old string
+cache.GetSet("key", "new", &amp;old) // atomic swap, decodes the old value into old</code></pre>
+                     </div>
+                     <div class="snippet-pane" data-lang="php">
+                        <pre><code data-syntax="php">$cache->add("key", "value", ttl: 60);      // set only if absent (SET NX)
+$cache->replace("key", "value", ttl: 60);  // set only if present (SET XX)
+$cache->getSet("key", "new");              // atomic swap, returns the old value</code></pre>
+                     </div>
                   </div>
                </div>
                <div class="api-group" id="api-batch">
@@ -878,6 +1065,8 @@ cache.getSet("key", "new");                  // atomic swap, returns the old val
                            <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
                            <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
                            <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
+                           <button class="pill lang-btn" data-lang-btn="go"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>Go</button>
+                           <button class="pill lang-btn" data-lang-btn="php"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>PHP</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -893,6 +1082,14 @@ cache.getAll(List.of("a", "b", "missing"));       // {a=1, b=2}</code></pre>
                         <pre><code data-syntax="typescript">cache.setMany({ a: "1", b: "2" }, { ttl: 60 });   // single transaction
 cache.getMany(["a", "b", "missing"]);              // Map(2) {'a' => '1', 'b' => '2'}</code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="go">
+                        <pre><code data-syntax="go">cache.SetMany(map[string]any{"a": "1", "b": "2"}, lytecache.TTL(60*time.Second))
+results, _ := cache.GetMany([]string{"a", "b", "missing"}) // map[string]RawValue, decode per key</code></pre>
+                     </div>
+                     <div class="snippet-pane" data-lang="php">
+                        <pre><code data-syntax="php">$cache->setMany(["a" => "1", "b" => "2"], ttl: 60);   // single transaction
+$cache->getMany(["a", "b", "missing"]);                // ["a" => "1", "b" => "2"]</code></pre>
+                     </div>
                   </div>
                </div>
                <div class="api-group" id="api-counters">
@@ -904,6 +1101,8 @@ cache.getMany(["a", "b", "missing"]);              // Map(2) {'a' => '1', 'b' =>
                            <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
                            <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
                            <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
+                           <button class="pill lang-btn" data-lang-btn="go"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>Go</button>
+                           <button class="pill lang-btn" data-lang-btn="php"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>PHP</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -926,6 +1125,18 @@ cache.incr("hits", 5);           // +5
 cache.decr("hits");              // -1
 cache.incrFloat("ratio", 0.5);</code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="go">
+                        <pre><code data-syntax="go">cache.Incr("hits", 1)          // +1
+cache.Incr("hits", 5)          // +5
+cache.Decr("hits", 1)          // -1
+cache.IncrFloat("ratio", 0.5)</code></pre>
+                     </div>
+                     <div class="snippet-pane" data-lang="php">
+                        <pre><code data-syntax="php">$cache->incr("hits");             // +1
+$cache->incr("hits", 5);          // +5
+$cache->decr("hits");             // -1
+$cache->incrFloat("ratio", 0.5);</code></pre>
+                     </div>
                   </div>
                </div>
                <div class="api-group" id="api-scan">
@@ -936,6 +1147,8 @@ cache.incrFloat("ratio", 0.5);</code></pre>
                            <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
                            <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
                            <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
+                           <button class="pill lang-btn" data-lang-btn="go"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>Go</button>
+                           <button class="pill lang-btn" data-lang-btn="php"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>PHP</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -953,6 +1166,16 @@ print(key)
   console.log(key);
 }</code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="go">
+                        <pre><code data-syntax="go">for key, err := range cache.Keys("session:*") { // iter.Seq2, GLOB syntax
+    fmt.Println(key, err)
+}</code></pre>
+                     </div>
+                     <div class="snippet-pane" data-lang="php">
+                        <pre><code data-syntax="php">foreach ($cache->keys("session:*") as $key) {  // lazy Generator, GLOB syntax
+    echo $key;
+}</code></pre>
+                     </div>
                   </div>
                </div>
                <div class="api-group" id="api-stats">
@@ -963,6 +1186,8 @@ print(key)
                            <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
                            <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
                            <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
+                           <button class="pill lang-btn" data-lang-btn="go"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>Go</button>
+                           <button class="pill lang-btn" data-lang-btn="php"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>PHP</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -990,6 +1215,19 @@ cache.close();       // shut down cleanly (or use try-with-resources)</code></pr
 cache.vacuum();   // reclaim disk space
 cache.close();    // shut down cleanly (or use Symbol.dispose)</code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="go">
+                        <pre><code data-syntax="go">stats, _ := cache.Stats()
+// {Hits:42 Misses:3 HitRate:0.93 KeyCount:12 SizeBytes:8291 Evictions:0 Path:"..."}
+cache.Vacuum()  // reclaim disk space
+cache.Close()   // shut down cleanly (idempotent)</code></pre>
+                     </div>
+                     <div class="snippet-pane" data-lang="php">
+                        <pre><code data-syntax="php">$cache->stats();
+// CacheStats(hits: 42, misses: 3, hitRate: 0.93, keyCount: 12,
+//   sizeBytes: 8291, evictions: 0, path: "...")
+$cache->vacuum();   // reclaim disk space
+$cache->close();    // shut down cleanly (idempotent; __destruct() also calls it)</code></pre>
+                     </div>
                   </div>
                </div>
                <div class="api-group" id="api-locks">
@@ -1001,6 +1239,8 @@ cache.close();    // shut down cleanly (or use Symbol.dispose)</code></pre>
                            <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
                            <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
                            <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
+                           <button class="pill lang-btn" data-lang-btn="go"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>Go</button>
+                           <button class="pill lang-btn" data-lang-btn="php"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>PHP</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -1018,6 +1258,16 @@ do_critical_work()</code></pre>
                         <pre><code data-syntax="typescript">using lock = cache.lock("resource", { timeoutMs: 30_000 });
 doCriticalWork();</code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="go">
+                        <pre><code data-syntax="go">lock, err := cache.Lock("resource", 30*time.Second)
+defer lock.Release()
+doCriticalWork()</code></pre>
+                     </div>
+                     <div class="snippet-pane" data-lang="php">
+                        <pre><code data-syntax="php">$cache->lock("resource", timeout: 30.0)->block(function () {
+    doCriticalWork();
+});</code></pre>
+                     </div>
                   </div>
                </div>
                <div class="api-group" id="api-memoize">
@@ -1028,6 +1278,8 @@ doCriticalWork();</code></pre>
                            <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
                            <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
                            <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
+                           <button class="pill lang-btn" data-lang-btn="go"><i class="lang-glyph lang-glyph-go" aria-hidden="true"></i>Go</button>
+                           <button class="pill lang-btn" data-lang-btn="php"><i class="lang-glyph lang-glyph-php" aria-hidden="true"></i>PHP</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -1042,6 +1294,13 @@ def expensive(x):
                      </div>
                      <div class="snippet-pane" data-lang="node">
                         <pre><code data-syntax="typescript">const result = cache.memoize(`expensive:${x}`, 3600, () => compute(x));</code></pre>
+                     </div>
+                     <div class="snippet-pane" data-lang="go">
+                        <pre><code data-syntax="go">result, err := lytecache.Memoize(cache, fmt.Sprintf("expensive:%v", x), time.Hour,
+    func() (T, error) { return compute(x) })</code></pre>
+                     </div>
+                     <div class="snippet-pane" data-lang="php">
+                        <pre><code data-syntax="php">$result = $cache->remember("expensive:{$x}", 3600, fn () => compute($x));</code></pre>
                      </div>
                   </div>
                </div>
@@ -1083,22 +1342,24 @@ def expensive(x):
                         <tr>
                            <td>4</td>
                            <td>JSON</td>
-                           <td>Any object, dict, list, dataclass, POJO, record, or JS object</td>
+                           <td>Any object, dict, list, dataclass, POJO, record, JS object, Go struct/map/slice, or PHP array/object/enum</td>
                         </tr>
                         <tr>
                            <td>5</td>
                            <td>Python pickle</td>
-                           <td>Python-only escape hatch; reading it from Java or Node.js raises a clear error, never garbage</td>
+                           <td>Python-only escape hatch; reading it from Java, Node.js, Go, or PHP raises a clear error, never garbage</td>
                         </tr>
                         <tr>
                            <td>6</td>
                            <td>Java serialized</td>
-                           <td>Reserved, never written; reading it from Python or Node.js raises a clear error</td>
+                           <td>Reserved, never written; reading it from Python, Node.js, Go, or PHP raises a clear error</td>
                         </tr>
                      </tbody>
                   </table>
                </div>
                <p>Node.js has a single <code>number</code> type rather than Python's <code>int</code>/<code>float</code> or Java's <code>long</code>/<code>double</code>, so its implementation picks type code 2 vs. 3 by shape (<code>Number.isInteger()</code>) rather than by caller intent, using <code>bigint</code> for integers beyond <code>Number.MAX_SAFE_INTEGER</code>. See <a href="https://github.com/lytecache/lytecache/blob/main/lytecache-node/SPEC.md" target="_blank" rel="noopener">lytecache-node/SPEC.md</a> for the full rules.</p>
+               <p>Go, like Python and Java, has distinct integer and floating-point types, so it decides type codes by the value's actual Go type rather than by shape: any Go integer type stores as code 2, <code>float32</code>/<code>float64</code> as code 3. A <code>uint64</code> beyond what signed 64-bit integers can hold is rejected outright rather than silently truncated. See <a href="https://github.com/lytecache/lytecache/blob/main/lytecache-go/SPEC.md" target="_blank" rel="noopener">lytecache-go/SPEC.md</a> for the full rules.</p>
+               <p>PHP strings are ambiguous between "raw bytes" and "text," unlike the other languages' distinct byte-array types, so lytecache uses a <code>Bytes</code> wrapper class to mean code 0 explicitly — a plain PHP <code>string</code> always stores as code 1. Objects serialize via <code>JsonSerializable</code> when implemented, else their public properties; a <code>DateTimeInterface</code> serializes to an RFC 3339 string and a <code>BackedEnum</code> to its backing value, matching the conventions above. See <a href="https://github.com/lytecache/lytecache/blob/main/lytecache-php/SPEC.md" target="_blank" rel="noopener">lytecache-php/SPEC.md</a> for the full rules.</p>
                <p>The zero-config default path derivation (<code>&lt;project-id&gt;</code> = <abbr title="Secure Hash Algorithm, 256-bit -- a one-way fingerprint function">SHA-256</abbr> of the resolved working directory) is byte-for-byte identical across every implementation, so all of them land on the same file for the same project directory — see <a href="#where-is-my-data">Where is my data?</a> above.</p>
             </section>
             <section class="section" id="glossary">
@@ -1153,7 +1414,7 @@ def expensive(x):
                         <tr>
                            <td><abbr title="JavaScript Object Notation">JSON</abbr></td>
                            <td>JavaScript Object Notation</td>
-                           <td>The plain-text format used to store objects, arrays, and other structured values portably across all three languages.</td>
+                           <td>The plain-text format used to store objects, arrays, and other structured values portably across every language.</td>
                         </tr>
                         <tr>
                            <td><abbr title="Plain Old Java Object">POJO</abbr></td>
@@ -1243,11 +1504,11 @@ def expensive(x):
          
            /* ---------- global language toggle (syncs every snippet on the page) ---------- */
            var currentLang = localStorage.getItem("lc-lang") || "python";
-           var INSTALL_TO_LANG = { pip: "python", gradle: "java", maven: "java", npm: "node" };
+           var INSTALL_TO_LANG = { pip: "python", gradle: "java", maven: "java", npm: "node", goget: "go", composer: "php" };
            // Which install method to show when switching back to a language with more than one
-           // (only Java currently has two -- Gradle vs Maven); Python and Node.js each have one.
-           var lastInstallForLang = { python: "pip", java: "gradle", node: "npm" };
-           var termTitles = { python: "quickstart.py", java: "Quickstart.java", node: "quickstart.ts" };
+           // (only Java currently has two -- Gradle vs Maven); Python, Node.js, Go, and PHP each have one.
+           var lastInstallForLang = { python: "pip", java: "gradle", node: "npm", go: "goget", php: "composer" };
+           var termTitles = { python: "quickstart.py", java: "Quickstart.java", node: "quickstart.ts", go: "quickstart.go", php: "quickstart.php" };
            function applyLang(lang, persist){
              currentLang = lang;
              document.querySelectorAll(".lang-group").forEach(function(group){
@@ -1364,6 +1625,8 @@ def expensive(x):
              python: ["def","class","return","import","from","with","as","for","in","if","elif","else","None","True","False","lambda","try","except","finally","not","and","or","is","yield","raise","pass","self","@dataclass"],
              java: ["public","private","protected","static","final","void","new","class","record","interface","try","catch","finally","return","import","package","this","extends","implements","throws","null","true","false","long","double","int","String","var"],
              typescript: ["const","let","var","function","return","import","from","export","default","new","class","interface","type","extends","implements","try","catch","finally","for","of","in","if","else","null","undefined","true","false","async","await","using","this","void","public","private","readonly"],
+             go: ["func","package","import","return","var","const","type","struct","interface","map","chan","for","range","if","else","switch","case","default","break","continue","go","defer","nil","true","false","err","string","int","float64","bool"],
+             php: ["use","function","return","new","class","final","public","private","protected","readonly","const","static","foreach","as","for","while","if","elseif","else","try","catch","finally","throw","echo","fn","null","true","false","this","namespace","enum","match"],
              bash: [],
              groovy: [],
              xml: []
@@ -1442,6 +1705,24 @@ def expensive(x):
                '// { name: \'Ada\' }',
                'cache.incr("hits");',
                '// 1'
+             ],
+             go: [
+               'cache, _ := lytecache.New()','',
+               'cache.Set("user:42", map[string]any{"name": "Ada"},',
+               '    lytecache.TTL(5*time.Minute))',
+               'cache.Get("user:42", &user)',
+               '// map[name:Ada]',
+               'cache.Incr("hits", 1)',
+               '// 1'
+             ],
+             php: [
+               'use Lytecache\\LyteCache;','',
+               '$cache = new LyteCache();',
+               '$cache->set("user:42", ["name" => "Ada"], ttl: 300);',
+               '$cache->get("user:42");',
+               '// ["name" => "Ada"]',
+               '$cache->incr("hits");',
+               '// 1'
              ]
            };
            var termEl = document.getElementById("termOutput");
@@ -1461,7 +1742,7 @@ def expensive(x):
                showLang: function(lang){ renderDemo(demos[lang].join("\n"), lang, false); }
              };
            } else {
-             var seq = ["python", "java", "node"];
+             var seq = ["python", "java", "node", "go", "php"];
              var seqIdx = 0;
              var typer = null;
              var advanceTimer = null;
