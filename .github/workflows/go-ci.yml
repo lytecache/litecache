@@ -43,10 +43,17 @@ jobs:
 
       - name: golangci-lint
         if: matrix.go-version == 'stable' && matrix.os == 'ubuntu-latest'
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v9
         with:
           working-directory: lytecache-go
-          version: latest
+          # golangci-lint-action@v6 predates golangci-lint v2 and only ever resolves
+          # `version: latest` to the latest v1.x release -- which was built with an
+          # older Go toolchain than this module's `go 1.25.0` directive, so it refused
+          # to run at all ("the Go language version used to build golangci-lint is
+          # lower than the targeted Go version"). .golangci.yml already targets the v2
+          # config schema, so v9 + an explicit v2.x version (per golangci-lint-action's
+          # own docs) is what actually matches the intended tool version.
+          version: v2.12
 
       - name: go test -race
         run: go test -race -v ./...
