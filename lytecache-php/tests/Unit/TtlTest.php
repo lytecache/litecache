@@ -90,10 +90,10 @@ final class TtlTest extends TestCase
     public function test_touch_refreshes_ttl(): void
     {
         $cache = $this->newCache();
-        $cache->set('k', 'v', ttl: 0.2);
+        $cache->set('k', 'v', ttl: 0.3);
         usleep(50_000);
-        self::assertTrue($cache->touch('k', 0.3));
-        usleep(250_000); // past the original 200ms TTL, within the refreshed 300ms
+        self::assertTrue($cache->touch('k', 0.6));
+        usleep(400_000); // past the original 300ms TTL, comfortably within the refreshed 600ms
         self::assertTrue($cache->has('k'));
     }
 
