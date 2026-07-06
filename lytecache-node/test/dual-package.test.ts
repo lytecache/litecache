@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { tempDbPath } from "./helpers.js";
@@ -23,8 +23,11 @@ describe("dual package (require + import)", () => {
 
   it("works via import (ESM)", () => {
     const path = tempDbPath();
+    // A bare OS path (e.g. Windows' "D:\...") is not a valid ESM module specifier -- Node's
+    // ESM loader parses "D:" as a URL scheme and rejects it. Absolute paths must be file://
+    // URLs, unlike require() below, which accepts a plain filesystem path directly.
     const script = `
-      import { LyteCache } from ${JSON.stringify(join(distDir, "index.js"))};
+      import { LyteCache } from ${JSON.stringify(pathToFileURL(join(distDir, "index.js")).href)};
       const c = new LyteCache({ path: ${JSON.stringify(path)}, sweepInterval: null });
       c.set("k", { name: "Ada" });
       console.log(JSON.stringify(c.get("k")));

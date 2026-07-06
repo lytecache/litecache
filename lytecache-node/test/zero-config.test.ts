@@ -1,6 +1,7 @@
 import { existsSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { LyteCache } from "../src/index.js";
 import { defaultPath } from "../src/paths.js";
@@ -87,7 +88,9 @@ describe("sweeper does not keep the process alive", () => {
     const path = tempDbPath();
     const script = `
       const { LyteCache } = require(${JSON.stringify(
-        new URL("../dist/index.cjs", import.meta.url).pathname,
+        // fileURLToPath, not .pathname -- .pathname leaves a leading slash before a Windows
+        // drive letter (e.g. "/D:/..."), which isn't a valid path for require() to resolve.
+        fileURLToPath(new URL("../dist/index.cjs", import.meta.url)),
       )});
       const cache = new LyteCache({ path: ${JSON.stringify(path)}, sweepInterval: 60 });
       cache.set("k", "v");
