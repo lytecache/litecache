@@ -3,8 +3,8 @@
    <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>Lytecache — Embedded, Redis-like caching for Python &amp; Java</title>
-      <meta name="description" content="Redis-like caching with zero infrastructure. One SQLite file, no server, readable from Python and Java alike." />
+      <title>Lytecache — Embedded, Redis-like caching for every language</title>
+      <meta name="description" content="Redis-like caching with zero infrastructure. One SQLite file, no server, one storage spec implemented natively in Python, Java, Node.js, and more languages to come." />
       <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%2396591a%22/%3E%3Ctext%20x%3D%2216%22%20y%3D%2223%22%20font-family%3D%22ui-monospace%2CMenlo%2CConsolas%2Cmonospace%22%20font-size%3D%2219%22%20font-weight%3D%22700%22%20fill%3D%22%23fff%22%20text-anchor%3D%22middle%22%3E%CE%BB%3C/text%3E%3C/svg%3E" />
       <style>
          /* ============================= TOKENS ============================= */
@@ -28,6 +28,15 @@
          --radius:7px; --radius-sm:4px;
          --content-w:720px;
          --sidebar-w:248px;
+         /* Brand marks (Simple Icons, CC0) as mask-image data URIs, so a single element can
+         recolor the logo via currentColor/background-color instead of shipping three colored
+         raster images -- this is also what keeps the whole page a single dependency-free file. */
+         --icon-python: url("data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+UHl0aG9uPC90aXRsZT48cGF0aCBkPSJNMTQuMjUuMThsLjkuMi43My4yNi41OS4zLjQ1LjMyLjM0LjM0LjI1LjM0LjE2LjMzLjEuMy4wNC4yNi4wMi4yLS4wMS4xM1Y4LjVsLS4wNS42My0uMTMuNTUtLjIxLjQ2LS4yNi4zOC0uMy4zMS0uMzMuMjUtLjM1LjE5LS4zNS4xNC0uMzMuMS0uMy4wNy0uMjYuMDQtLjIxLjAySDguNzdsLS42OS4wNS0uNTkuMTQtLjUuMjItLjQxLjI3LS4zMy4zMi0uMjcuMzUtLjIuMzYtLjE1LjM3LS4xLjM1LS4wNy4zMi0uMDQuMjctLjAyLjIxdjMuMDZIMy4xN2wtLjIxLS4wMy0uMjgtLjA3LS4zMi0uMTItLjM1LS4xOC0uMzYtLjI2LS4zNi0uMzYtLjM1LS40Ni0uMzItLjU5LS4yOC0uNzMtLjIxLS44OC0uMTQtMS4wNS0uMDUtMS4yMy4wNi0xLjIyLjE2LTEuMDQuMjQtLjg3LjMyLS43MS4zNi0uNTcuNC0uNDQuNDItLjMzLjQyLS4yNC40LS4xNi4zNi0uMS4zMi0uMDUuMjQtLjAxaC4xNmwuMDYuMDFoOC4xNnYtLjgzSDYuMThsLS4wMS0yLjc1LS4wMi0uMzcuMDUtLjM0LjExLS4zMS4xNy0uMjguMjUtLjI2LjMxLS4yMy4zOC0uMi40NC0uMTguNTEtLjE1LjU4LS4xMi42NC0uMS43MS0uMDYuNzctLjA0Ljg0LS4wMiAxLjI3LjA1em0tNi4zIDEuOThsLS4yMy4zMy0uMDguNDEuMDguNDEuMjMuMzQuMzMuMjIuNDEuMDkuNDEtLjA5LjMzLS4yMi4yMy0uMzQuMDgtLjQxLS4wOC0uNDEtLjIzLS4zMy0uMzMtLjIyLS40MS0uMDktLjQxLjA5em0xMy4wOSAzLjk1bC4yOC4wNi4zMi4xMi4zNS4xOC4zNi4yNy4zNi4zNS4zNS40Ny4zMi41OS4yOC43My4yMS44OC4xNCAxLjA0LjA1IDEuMjMtLjA2IDEuMjMtLjE2IDEuMDQtLjI0Ljg2LS4zMi43MS0uMzYuNTctLjQuNDUtLjQyLjMzLS40Mi4yNC0uNC4xNi0uMzYuMDktLjMyLjA1LS4yNC4wMi0uMTYtLjAxaC04LjIydi44Mmg1Ljg0bC4wMSAyLjc2LjAyLjM2LS4wNS4zNC0uMTEuMzEtLjE3LjI5LS4yNS4yNS0uMzEuMjQtLjM4LjItLjQ0LjE3LS41MS4xNS0uNTguMTMtLjY0LjA5LS43MS4wNy0uNzcuMDQtLjg0LjAxLTEuMjctLjA0LTEuMDctLjE0LS45LS4yLS43My0uMjUtLjU5LS4zLS40NS0uMzMtLjM0LS4zNC0uMjUtLjM0LS4xNi0uMzMtLjEtLjMtLjA0LS4yNS0uMDItLjIuMDEtLjEzdi01LjM0bC4wNS0uNjQuMTMtLjU0LjIxLS40Ni4yNi0uMzguMy0uMzIuMzMtLjI0LjM1LS4yLjM1LS4xNC4zMy0uMS4zLS4wNi4yNi0uMDQuMjEtLjAyLjEzLS4wMWg1Ljg0bC42OS0uMDUuNTktLjE0LjUtLjIxLjQxLS4yOC4zMy0uMzIuMjctLjM1LjItLjM2LjE1LS4zNi4xLS4zNS4wNy0uMzIuMDQtLjI4LjAyLS4yMVY2LjA3aDIuMDlsLjE0LjAxem0tNi40NyAxNC4yNWwtLjIzLjMzLS4wOC40MS4wOC40MS4yMy4zMy4zMy4yMy40MS4wOC40MS0uMDguMzMtLjIzLjIzLS4zMy4wOC0uNDEtLjA4LS40MS0uMjMtLjMzLS4zMy0uMjMtLjQxLS4wOC0uNDEuMDh6Ii8+PC9zdmc+");
+         --icon-node: url("data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+Tm9kZS5qczwvdGl0bGU+PHBhdGggZD0iTTExLjk5OCwyNGMtMC4zMjEsMC0wLjY0MS0wLjA4NC0wLjkyMi0wLjI0N2wtMi45MzYtMS43MzdjLTAuNDM4LTAuMjQ1LTAuMjI0LTAuMzMyLTAuMDgtMC4zODMgYzAuNTg1LTAuMjAzLDAuNzAzLTAuMjUsMS4zMjgtMC42MDRjMC4wNjUtMC4wMzcsMC4xNTEtMC4wMjMsMC4yMTgsMC4wMTdsMi4yNTYsMS4zMzljMC4wODIsMC4wNDUsMC4xOTcsMC4wNDUsMC4yNzIsMGw4Ljc5NS01LjA3NiBjMC4wODItMC4wNDcsMC4xMzQtMC4xNDEsMC4xMzQtMC4yMzhWNi45MjFjMC0wLjA5OS0wLjA1My0wLjE5Mi0wLjEzNy0wLjI0MmwtOC43OTEtNS4wNzJjLTAuMDgxLTAuMDQ3LTAuMTg5LTAuMDQ3LTAuMjcxLDAgTDMuMDc1LDYuNjhDMi45OSw2LjcyOSwyLjkzNiw2LjgyNSwyLjkzNiw2LjkyMXYxMC4xNWMwLDAuMDk3LDAuMDU0LDAuMTg5LDAuMTM5LDAuMjM1bDIuNDA5LDEuMzkyIGMxLjMwNywwLjY1NCwyLjEwOC0wLjExNiwyLjEwOC0wLjg5VjcuNzg3YzAtMC4xNDIsMC4xMTQtMC4yNTMsMC4yNTYtMC4yNTNoMS4xMTVjMC4xMzksMCwwLjI1NSwwLjExMiwwLjI1NSwwLjI1M3YxMC4wMjEgYzAsMS43NDUtMC45NSwyLjc0NS0yLjYwNCwyLjc0NWMtMC41MDgsMC0wLjkwOSwwLTIuMDI2LTAuNTUxTDIuMjgsMTguNjc1Yy0wLjU3LTAuMzI5LTAuOTIyLTAuOTQ1LTAuOTIyLTEuNjA0VjYuOTIxIGMwLTAuNjU5LDAuMzUzLTEuMjc1LDAuOTIyLTEuNjAzbDguNzk1LTUuMDgyYzAuNTU3LTAuMzE1LDEuMjk2LTAuMzE1LDEuODQ4LDBsOC43OTQsNS4wODJjMC41NywwLjMyOSwwLjkyNCwwLjk0NCwwLjkyNCwxLjYwMyB2MTAuMTVjMCwwLjY1OS0wLjM1NCwxLjI3My0wLjkyNCwxLjYwNGwtOC43OTQsNS4wNzhDMTIuNjQzLDIzLjkxNiwxMi4zMjQsMjQsMTEuOTk4LDI0eiBNMTkuMDk5LDEzLjk5MyBjMC0xLjktMS4yODQtMi40MDYtMy45ODctMi43NjNjLTIuNzMxLTAuMzYxLTMuMDA5LTAuNTQ4LTMuMDA5LTEuMTg3YzAtMC41MjgsMC4yMzUtMS4yMzMsMi4yNTgtMS4yMzMgYzEuODA3LDAsMi40NzMsMC4zODksMi43NDcsMS42MDdjMC4wMjQsMC4xMTUsMC4xMjksMC4xOTksMC4yNDcsMC4xOTloMS4xNDFjMC4wNzEsMCwwLjEzOC0wLjAzMSwwLjE4Ni0wLjA4MSBjMC4wNDgtMC4wNTQsMC4wNzQtMC4xMjMsMC4wNjctMC4xOTZjLTAuMTc3LTIuMDk4LTEuNTcxLTMuMDc2LTQuMzg4LTMuMDc2Yy0yLjUwOCwwLTQuMDA0LDEuMDU4LTQuMDA0LDIuODMzIGMwLDEuOTI1LDEuNDg4LDIuNDU3LDMuODk1LDIuNjk1YzIuODgsMC4yODIsMy4xMDMsMC43MDMsMy4xMDMsMS4yNjljMCwwLjk4My0wLjc4OSwxLjQwMi0yLjY0MiwxLjQwMiBjLTIuMzI3LDAtMi44MzktMC41ODQtMy4wMTEtMS43NDJjLTAuMDItMC4xMjQtMC4xMjYtMC4yMTUtMC4yNTMtMC4yMTVoLTEuMTM3Yy0wLjE0MSwwLTAuMjU0LDAuMTEyLTAuMjU0LDAuMjUzIGMwLDEuNDgyLDAuODA2LDMuMjQ4LDQuNjU1LDMuMjQ4QzE3LjUwMSwxNy4wMDcsMTkuMDk5LDE1LjkxLDE5LjA5OSwxMy45OTN6Ii8+PC9zdmc+");
+         --icon-java: url("data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+SmF2YTwvdGl0bGU+PHBhdGggZD0iTTguODUxIDE4LjU2cy0uOTE3LjUzNC42NTMuNzE0YzEuOTAyLjIxOCAyLjg3NC4xODcgNC45NjktLjIxMSAwIDAgLjU1Mi4zNDYgMS4zMjEuNjQ2LTQuNjk5IDIuMDEzLTEwLjYzMy0uMTE4LTYuOTQzLTEuMTQ5TTguMjc2IDE1LjkzM3MtMS4wMjguNzYxLjU0Mi45MjRjMi4wMzIuMjA5IDMuNjM2LjIyNyA2LjQxMy0uMzA4IDAgMCAuMzg0LjM4OS45ODcuNjAyLTUuNjc5IDEuNjYxLTEyLjAwNy4xMy03Ljk0Mi0xLjIxOE0xMy4xMTYgMTEuNDc1YzEuMTU4IDEuMzMzLS4zMDQgMi41MzMtLjMwNCAyLjUzM3MyLjkzOS0xLjUxOCAxLjU4OS0zLjQxOGMtMS4yNjEtMS43NzItMi4yMjgtMi42NTIgMy4wMDctNS42ODggMC0uMDAxLTguMjE2IDIuMDUxLTQuMjkyIDYuNTczTTE5LjMzIDIwLjUwNHMuNjc5LjU1OS0uNzQ3Ljk5MWMtMi43MTIuODIyLTExLjI4OCAxLjA2OS0xMy42NjkuMDMzLS44NTYtLjM3My43NS0uODkgMS4yNTQtLjk5OC41MjctLjExNC44MjgtLjA5My44MjgtLjA5My0uOTUzLS42NzEtNi4xNTYgMS4zMTctMi42NDMgMS44ODcgOS41OCAxLjU1MyAxNy40NjItLjcgMTQuOTc3LTEuODJNOS4yOTIgMTMuMjFzLTQuMzYyIDEuMDM2LTEuNTQ0IDEuNDEyYzEuMTg5LjE1OSAzLjU2MS4xMjMgNS43Ny0uMDYyIDEuODA2LS4xNTIgMy42MTgtLjQ3NyAzLjYxOC0uNDc3cy0uNjM3LjI3Mi0xLjA5OC41ODdjLTQuNDI5IDEuMTY1LTEyLjk4Ni42MjMtMTAuNTIyLS41NjggMi4wODItMS4wMDYgMy43NzYtLjg5MiAzLjc3Ni0uODkyTTE3LjExNiAxNy41ODRjNC41MDMtMi4zNCAyLjQyMS00LjU4OS45NjgtNC4yODUtLjM1NS4wNzQtLjUxNS4xMzgtLjUxNS4xMzhzLjEzMi0uMjA3LjM4NS0uMjk3YzIuODc1LTEuMDExIDUuMDg2IDIuOTgxLS45MjggNC41NjIgMC0uMDAxLjA3LS4wNjIuMDktLjExOE0xNC40MDEgMHMyLjQ5NCAyLjQ5NC0yLjM2NSA2LjMzYy0zLjg5NiAzLjA3Ny0uODg4IDQuODMyLS4wMDEgNi44MzYtMi4yNzQtMi4wNTMtMy45NDMtMy44NTgtMi44MjQtNS41MzkgMS42NDQtMi40NjkgNi4xOTctMy42NjUgNS4xOS03LjYyN005LjczNCAyMy45MjRjNC4zMjIuMjc3IDEwLjk1OS0uMTUzIDExLjExNi0yLjE5OCAwIDAtLjMwMi43NzUtMy41NzIgMS4zOTEtMy42ODguNjk0LTguMjM5LjYxMy0xMC45MzcuMTY4IDAtLjAwMS41NTMuNDU3IDMuMzkzLjYzOSIvPjwvc3ZnPg==");
+         --lang-python:#3776ab; --lang-python-soft:rgba(55,118,171,0.12);
+         --lang-java:#e76f00; --lang-java-soft:rgba(231,111,0,0.12);
+         --lang-node:#339933; --lang-node-soft:rgba(51,153,51,0.12);
          }
          @media (prefers-color-scheme: dark){
          :root{
@@ -80,6 +89,7 @@
          th,td{ text-align:left; padding:var(--space-3) var(--space-4); border-bottom:1px solid var(--border); font-size:.9rem; }
          th{ font-family:var(--font-display); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-dim); font-weight:600; }
          code{ font-family:var(--font-mono); font-size:.85em; }
+         abbr[title]{ text-decoration:underline dotted var(--text-dim); text-underline-offset:2px; cursor:help; }
          :not(pre) > code{
          background:var(--surface-2); border:1px solid var(--border); border-radius:4px;
          padding:.1em .4em;
@@ -235,6 +245,32 @@
          .fit-col ul{ padding-left:0; list-style:none; }
          .fit-col li{ font-size:.9rem; color:var(--text-dim); padding-left:1.6em; position:relative; }
          .fit-col li::before{ content:"—"; position:absolute; left:0; color:var(--border); }
+         /* ============================= LANGUAGE LOGOS ============================= */
+         .lang-glyph{
+         display:inline-block; width:14px; height:14px; flex-shrink:0;
+         background-color:currentColor;
+         mask-size:contain; -webkit-mask-size:contain;
+         mask-repeat:no-repeat; -webkit-mask-repeat:no-repeat;
+         mask-position:center; -webkit-mask-position:center;
+         }
+         .lang-glyph-python{ mask-image:var(--icon-python); -webkit-mask-image:var(--icon-python); }
+         .lang-glyph-java{ mask-image:var(--icon-java); -webkit-mask-image:var(--icon-java); }
+         .lang-glyph-node{ mask-image:var(--icon-node); -webkit-mask-image:var(--icon-node); }
+         .pill .lang-glyph{ margin-right:.45em; vertical-align:-2px; }
+         .lang-badges{ display:flex; flex-wrap:wrap; gap:.6em; margin-top:var(--space-6); }
+         .lang-badge{
+         display:inline-flex; align-items:center; gap:.5em; font-family:var(--font-display);
+         font-size:.78rem; font-weight:700; padding:.4em .8em; border-radius:999px;
+         border:1px solid var(--border); background:var(--surface); color:var(--text);
+         }
+         .lang-badge .lang-glyph{ width:15px; height:15px; }
+         .lang-badge-python{ border-color:var(--lang-python); background:var(--lang-python-soft); }
+         .lang-badge-python .lang-glyph{ color:var(--lang-python); }
+         .lang-badge-java{ border-color:var(--lang-java); background:var(--lang-java-soft); }
+         .lang-badge-java .lang-glyph{ color:var(--lang-java); }
+         .lang-badge-node{ border-color:var(--lang-node); background:var(--lang-node-soft); }
+         .lang-badge-node .lang-glyph{ color:var(--lang-node); }
+         .lang-badge-more{ color:var(--text-dim); border-style:dashed; }
          /* ============================= API GROUPS ============================= */
          .api-group{ margin-bottom:var(--space-12); }
          .api-group h3{ display:flex; align-items:baseline; gap:.6em; }
@@ -316,6 +352,7 @@
             <div class="nav-group">
                <div class="nav-group-title">Cross-language</div>
                <a href="#storage-spec">Storage spec &amp; type codes</a>
+               <a href="#glossary">Glossary</a>
             </div>
          </aside>
          <main id="top">
@@ -324,16 +361,23 @@
                   <div>
                      <p class="eyebrow">Embedded key-value store</p>
                      <h1>Redis-like caching.<br><span class="hl">Zero infrastructure.</span></h1>
-                     <p class="lead">One local SQLite file stands in for the server. <code>set</code>, <code>get</code>, TTLs, atomic counters, eviction, and process-safe locks — from Python and Java alike, reading and writing the very same file.</p>
+                     <p class="lead">One local SQLite file stands in for the server. <code>set</code>, <code>get</code>, TTLs, atomic counters, eviction, and process-safe locks — implemented natively in whichever language you already write, all reading and writing the very same file.</p>
+                     <div class="lang-badges" aria-label="Available for">
+                        <span class="lang-badge lang-badge-python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</span>
+                        <span class="lang-badge lang-badge-java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</span>
+                        <span class="lang-badge lang-badge-node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</span>
+                        <span class="lang-badge lang-badge-more">+ more coming</span>
+                     </div>
                      <div class="hero-ctas">
                         <a class="btn btn-primary" href="#quickstart">Get started →</a>
                         <a class="btn btn-ghost" href="https://github.com/lytecache/lytecache" target="_blank" rel="noopener">View source</a>
                      </div>
                      <div class="install-tabs">
                         <div class="pillrow" role="tablist" aria-label="Install method">
-                           <button class="pill install-pill active" data-install="pip">pip</button>
-                           <button class="pill install-pill" data-install="gradle">Gradle</button>
-                           <button class="pill install-pill" data-install="maven">Maven</button>
+                           <button class="pill install-pill active" data-install="pip"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>pip</button>
+                           <button class="pill install-pill" data-install="gradle"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Gradle</button>
+                           <button class="pill install-pill" data-install="maven"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Maven</button>
+                           <button class="pill install-pill" data-install="npm"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>npm</button>
                         </div>
                         <div class="install-panes">
                            <div class="snippet install-snippet">
@@ -353,6 +397,9 @@
   &lt;artifactId&gt;lytecache&lt;/artifactId&gt;
   &lt;version&gt;0.1.0&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
+                              </div>
+                              <div class="snippet-pane" data-install-pane="npm">
+                                 <pre><code data-syntax="bash">npm install lytecache</code></pre>
                               </div>
                            </div>
                            <div class="snippet install-snippet lang-group">
@@ -375,6 +422,13 @@ try (LyteCache cache = new LyteCache()) {
     cache.incr("hits");
 }</code></pre>
                               </div>
+                              <div class="snippet-pane" data-lang="node">
+                                 <pre><code data-syntax="typescript">import { LyteCache } from "lytecache";
+
+const cache = new LyteCache();
+cache.set("hits", 0);
+cache.incr("hits");</code></pre>
+                              </div>
                            </div>
                         </div>
                      </div>
@@ -396,7 +450,7 @@ try (LyteCache cache = new LyteCache()) {
                   </div>
                   <div class="feature">
                      <h4>One file format</h4>
-                     <p>Python and Java read and write the identical schema — even the same counters.</p>
+                     <p>Every implementation reads and writes the identical schema — even the same counters.</p>
                   </div>
                   <div class="feature">
                      <h4>Atomic under load</h4>
@@ -415,8 +469,9 @@ try (LyteCache cache = new LyteCache()) {
                <div class="snippet lang-group">
                   <div class="snippet-head">
                      <div class="pillrow" role="tablist" aria-label="Language">
-                        <button class="pill lang-btn active" data-lang-btn="python">Python</button>
-                        <button class="pill lang-btn" data-lang-btn="java">Java</button>
+                        <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
+                        <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
+                        <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
                      </div>
                      <button class="copy-btn" data-copy>Copy</button>
                   </div>
@@ -438,13 +493,21 @@ cache.incr("hits")                      # 1</code></pre>
         cache.incr("hits");                  // 1
 }</code></pre>
                   </div>
+                  <div class="snippet-pane" data-lang="node">
+                     <pre><code data-syntax="typescript">import { LyteCache } from "lytecache";
+
+const cache = new LyteCache();               // no path, no setup -- just works
+cache.set("user:42", { name: "Ada" }, { ttl: 300 });
+cache.get("user:42");                        // { name: "Ada" }
+cache.incr("hits");                          // 1</code></pre>
+                  </div>
                </div>
-               <p>Both are context managers: <code>with LyteCache() as cache:</code> in Python, <code>try (LyteCache cache = new LyteCache())</code> in Java. Closing flushes any buffered state and stops the background sweeper cleanly.</p>
+               <p>All three are disposable: <code>with LyteCache() as cache:</code> in Python, <code>try (LyteCache cache = new LyteCache())</code> in Java, <code>using cache = new LyteCache()</code> in Node.js (or call <code>cache[Symbol.dispose]()</code> directly). Closing flushes any buffered state and stops the background sweeper cleanly.</p>
             </section>
             <section class="section" id="where-is-my-data">
                <p class="eyebrow">Overview</p>
                <h2>Where is my data?</h2>
-               <p class="lead">By default, both languages resolve the exact same file for the same project — so a Python process and a Java process started from the same directory share one cache automatically.</p>
+               <p class="lead">By default, every implementation resolves the exact same file for the same project — so a Python process, a Java process, and a Node.js process started from the same directory all share one cache automatically.</p>
                <pre class="path-example">&lt;platform cache dir&gt;/lytecache/&lt;project-id&gt;.db</pre>
                <div class="table-wrap">
                   <table>
@@ -470,13 +533,13 @@ cache.incr("hits")                      # 1</code></pre>
                      </tbody>
                   </table>
                </div>
-               <p><code>&lt;project-id&gt;</code> is the first 12 hex characters of the SHA-256 hash of your current working directory's resolved, absolute path — an identical derivation in both languages, so every project gets its own file and nothing is left behind in your repo.</p>
+               <p><code>&lt;project-id&gt;</code> is the first 12 hex characters of the SHA-256 hash of your current working directory's resolved, absolute path — an identical derivation in every implementation, so every project gets its own file and nothing is left behind in your repo. (See the <a href="#glossary">glossary</a> if "SHA-256" is new to you.)</p>
                <h3>Overriding it</h3>
                <ul>
-                  <li>Pass an explicit path — <code>LyteCache("/data/cache.db")</code> in Python, <code>.path(Path.of("/data/cache.db"))</code> on the Java builder.</li>
-                  <li>Set <code>LYTECACHE_PATH=/data/cache.db</code> in the environment — takes priority over the default in both languages.</li>
+                  <li>Pass an explicit path — <code>LyteCache("/data/cache.db")</code> in Python, <code>.path(Path.of("/data/cache.db"))</code> on the Java builder, <code>new LyteCache({ path: "/data/cache.db" })</code> in Node.js.</li>
+                  <li>Set <code>LYTECACHE_PATH=/data/cache.db</code> in the environment — takes priority over the default in every language.</li>
                </ul>
-               <p>Introspect it programmatically: <code>LyteCache.default_path()</code> / <code>cache.path</code> in Python, <code>LyteCache.defaultPath()</code> / <code>cache.path()</code> in Java. The file is never a mystery.</p>
+               <p>Introspect it programmatically: <code>LyteCache.default_path()</code> / <code>cache.path</code> in Python, <code>LyteCache.defaultPath()</code> / <code>cache.path()</code> in Java, <code>LyteCache.defaultPath()</code> / <code>cache.path</code> in Node.js. The file is never a mystery.</p>
             </section>
             <section class="section" id="ttl">
                <p class="eyebrow">Guide</p>
@@ -484,13 +547,14 @@ cache.incr("hits")                      # 1</code></pre>
                <p class="lead">Expiration applies identically to every value type — strings, numbers, dataclasses, dicts, POJOs, records. There's nothing special about storing an object.</p>
                <div class="callout">
                   <p class="eyebrow">Watch the units</p>
-                  <p><strong>Python's <code>ttl</code> is a <code>float</code>, in seconds.</strong> <code>ttl=5000</code> means "expire in 5000 seconds" (~83 minutes), not 5 seconds — the most common reason a key seems to "never expire." <strong>Java's is an explicit <code>Duration</code></strong> (<code>Duration.ofSeconds(5)</code> vs. <code>Duration.ofMillis(5)</code>), so there's no unit ambiguity there.</p>
+                  <p><strong>Python's and Node.js's <code>ttl</code> are both plain numbers, in seconds</strong> (a <code>float</code> in Python, a <code>number</code> in Node). <code>ttl=5000</code> / <code>{ ttl: 5000 }</code> means "expire in 5000 seconds" (~83 minutes), not 5 seconds — the most common reason a key seems to "never expire." <strong>Java's is an explicit <code>Duration</code></strong> (<code>Duration.ofSeconds(5)</code> vs. <code>Duration.ofMillis(5)</code>), so there's no unit ambiguity there.</p>
                </div>
                <div class="snippet lang-group">
                   <div class="snippet-head">
                      <div class="pillrow" role="tablist" aria-label="Language">
-                        <button class="pill lang-btn active" data-lang-btn="python">Python</button>
-                        <button class="pill lang-btn" data-lang-btn="java">Java</button>
+                        <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
+                        <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
+                        <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
                      </div>
                      <button class="copy-btn" data-copy>Copy</button>
                   </div>
@@ -519,12 +583,24 @@ cache.expire("session", Duration.ofSeconds(60));  // overwrite the TTL
 cache.persist("session");                          // remove the TTL entirely
 cache.touch("session", Duration.ofMinutes(5));     // sliding expiration</code></pre>
                   </div>
+                  <div class="snippet-pane" data-lang="node">
+                     <pre><code data-syntax="typescript">cache.set("session", { userId: 42 }, { ttl: 300 });  // expires in 300s (5 min)
+cache.set("otp", "123456", { ttl: 0.5 });            // expires in 500ms
+
+cache.ttl("session");        // seconds remaining, e.g. 298.7
+cache.ttl("permanentKey");   // -1 if no TTL was set
+cache.ttl("missing");        // undefined if the key doesn't exist
+
+cache.expire("session", 60);   // overwrite the TTL: now expires in 60s
+cache.persist("session");      // remove the TTL entirely
+cache.touch("session", 300);   // sliding expiration: refresh back to 300s</code></pre>
+                  </div>
                </div>
                <h3>Lazy and active expiration</h3>
-               <p>Expiration is enforced two ways, in both languages:</p>
+               <p>Expiration is enforced two ways, in every implementation:</p>
                <ul>
-                  <li><strong>Lazily</strong>, on every read (<code>get</code> / <code>exists</code> / <code>getAll</code>): an expired row is treated as a miss and deleted on the spot, even with the background sweeper disabled.</li>
-                  <li><strong>Actively</strong>, by a background sweeper thread that runs every <code>sweep_interval</code> / <code>sweepInterval</code> (default 60s) and deletes expired rows in batches, so disk isn't held by dead keys even if nothing ever reads them again.</li>
+                  <li><strong>Lazily</strong>, on every read (<code>get</code> / <code>exists</code> / <code>getAll</code> / <code>getMany</code>): an expired row is treated as a miss and deleted on the spot, even with the background sweeper disabled.</li>
+                  <li><strong>Actively</strong>, by a background sweeper (a thread in Python/Java, a <code>setInterval</code> timer in Node.js) that runs every <code>sweep_interval</code> / <code>sweepInterval</code> (default 60s) and deletes expired rows in batches, so disk isn't held by dead keys even if nothing ever reads them again.</li>
                </ul>
                <p>If you inspect the <code>.db</code> file directly (a SQLite browser, say) moments after a key expires but before the next sweep tick, the row may still be physically present — that's expected. <code>get()</code>/<code>exists()</code> already treat it as gone. Lower the sweep interval, or call <code>vacuum()</code>, if you need the file to shrink sooner.</p>
             </section>
@@ -534,8 +610,9 @@ cache.touch("session", Duration.ofMinutes(5));     // sliding expiration</code><
                <div class="snippet lang-group">
                   <div class="snippet-head">
                      <div class="pillrow" role="tablist" aria-label="Language">
-                        <button class="pill lang-btn active" data-lang-btn="python">Python</button>
-                        <button class="pill lang-btn" data-lang-btn="java">Java</button>
+                        <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
+                        <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
+                        <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
                      </div>
                      <button class="copy-btn" data-copy>Copy</button>
                   </div>
@@ -547,13 +624,18 @@ cache.flush()                  # delete EVERYTHING in the current namespace</cod
                      <pre><code data-syntax="java">cache.delete("key1", "key2");   // delete specific keys; returns how many existed
 cache.flush();                  // delete EVERYTHING in the current namespace</code></pre>
                   </div>
+                  <div class="snippet-pane" data-lang="node">
+                     <pre><code data-syntax="typescript">cache.delete("key1", "key2");   // delete specific keys; returns how many existed
+cache.flush();                  // delete EVERYTHING in the current namespace</code></pre>
+                  </div>
                </div>
                <p><code>flush()</code> takes no key or pattern argument by design — it always clears the entire namespace (the default namespace, unless you configured a different one). To clear a subset, delete by key or by pattern instead:</p>
                <div class="snippet lang-group">
                   <div class="snippet-head">
                      <div class="pillrow" role="tablist" aria-label="Language">
-                        <button class="pill lang-btn active" data-lang-btn="python">Python</button>
-                        <button class="pill lang-btn" data-lang-btn="java">Java</button>
+                        <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
+                        <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
+                        <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
                      </div>
                      <button class="copy-btn" data-copy>Copy</button>
                   </div>
@@ -563,6 +645,9 @@ cache.delete(key)</code></pre>
                   </div>
                   <div class="snippet-pane" data-lang="java">
                      <pre><code data-syntax="java">cache.keys("session:*").forEach(cache::delete);</code></pre>
+                  </div>
+                  <div class="snippet-pane" data-lang="node">
+                     <pre><code data-syntax="typescript">for (const key of cache.keys("session:*")) cache.delete(key);</code></pre>
                   </div>
                </div>
                <div class="callout">
@@ -581,7 +666,7 @@ cache.delete(key)</code></pre>
                         <li>Scripts, CLIs, notebooks, small web services, background jobs, test fixtures</li>
                         <li>A cache that survives process restarts without a separate daemon</li>
                         <li>Multi-process coordination via the process-safe distributed lock</li>
-                        <li>Mixed-language systems where a Python and a Java process share one cache file</li>
+                        <li>Mixed-language systems — a Python, Java, and Node.js process can all share one cache file</li>
                      </ul>
                   </div>
                   <div class="fit-col">
@@ -602,8 +687,9 @@ cache.delete(key)</code></pre>
                <div class="snippet lang-group">
                   <div class="snippet-head">
                      <div class="pillrow" role="tablist" aria-label="Language">
-                        <button class="pill lang-btn active" data-lang-btn="python">Python</button>
-                        <button class="pill lang-btn" data-lang-btn="java">Java</button>
+                        <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
+                        <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
+                        <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
                      </div>
                      <button class="copy-btn" data-copy>Copy</button>
                   </div>
@@ -632,20 +718,35 @@ cache.delete(key)</code></pre>
 .strict(false)                          // on read error: log+miss, or throw
 .build();</code></pre>
                   </div>
+                  <div class="snippet-pane" data-lang="node">
+                     <pre><code data-syntax="typescript">new LyteCache({
+  path: undefined,       // explicit file path; default: LyteCache.defaultPath()
+  namespace: "default",  // logical partition within the database file
+  maxKeys: undefined,    // evict when the namespace exceeds this many keys
+  maxBytes: undefined,   // evict when the namespace exceeds this many bytes
+  eviction: "lru",       // "lru" | "ttl" | "random" | "noeviction"
+  sweepInterval: 60,     // seconds between maintenance passes; null disables
+                         // the timer and sweeps opportunistically instead
+  strict: false,         // true: throw on internal read errors instead of
+                         // degrading to a miss
+  logger: console.warn,  // called on a non-strict degraded read
+});</code></pre>
+                  </div>
                </div>
-               <p><strong>Eviction policies:</strong> <code>lru</code> (default, evicts least-recently-used), <code>ttl</code> (soonest-to-expire first), <code>random</code>, and <code>noeviction</code> (rejects the write instead of evicting). LFU is a documented TODO in both.</p>
+               <p><strong>Eviction policies:</strong> <code>lru</code> (default, evicts least-recently-used), <code>ttl</code> (soonest-to-expire first), <code>random</code>, and <code>noeviction</code> (rejects the write instead of evicting). <abbr title="Least Frequently Used">LFU</abbr> is a documented TODO in every implementation. Unfamiliar with an abbreviation like <abbr title="Least Recently Used">LRU</abbr>? See the <a href="#glossary">glossary</a>.</p>
             </section>
             <section class="section" id="api-reference">
                <p class="eyebrow">API reference</p>
                <h2>Method reference</h2>
-               <p class="lead">Grouped by what you're trying to do. Every group below shows both languages side by side — flip the toggle once and it stays flipped for the rest of the page.</p>
+               <p class="lead">Grouped by what you're trying to do. Every group below shows all three languages side by side — flip the toggle once and it stays flipped for the rest of the page.</p>
                <div class="api-group" id="api-set-get">
                   <h3>Set &amp; get</h3>
                   <div class="snippet lang-group">
                      <div class="snippet-head">
                         <div class="pillrow" role="tablist" aria-label="Language">
-                           <button class="pill lang-btn active" data-lang-btn="python">Python</button>
-                           <button class="pill lang-btn" data-lang-btn="java">Java</button>
+                           <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
+                           <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
+                           <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -668,16 +769,25 @@ byte[] b = cache.getBytes("key");
 cache.delete("key1", "key2");          // returns count actually deleted
 cache.exists("key");</code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="node">
+                        <pre><code data-syntax="typescript">cache.set("key", "value");
+cache.set("key", "value", { ttl: 300 });
+cache.get("key");                // undefined if missing or expired
+cache.get("key", "default");     // custom default on miss
+cache.delete("key1", "key2");    // returns count actually deleted
+cache.exists("key");</code></pre>
+                     </div>
                   </div>
                </div>
                <div class="api-group" id="api-objects">
                   <h3>Objects &amp; generics</h3>
-                  <p>Anything JSON can represent — dicts, lists, dataclasses, POJOs, records — round-trips as portable JSON, readable from either language.</p>
+                  <p>Anything JSON can represent — dicts, lists, dataclasses, POJOs (a plain object with no special base class or annotations — see <a href="#glossary">glossary</a>), records — round-trips as portable JSON, readable from any of the languages.</p>
                   <div class="snippet lang-group">
                      <div class="snippet-head">
                         <div class="pillrow" role="tablist" aria-label="Language">
-                           <button class="pill lang-btn active" data-lang-btn="python">Python</button>
-                           <button class="pill lang-btn" data-lang-btn="java">Java</button>
+                           <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
+                           <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
+                           <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -700,20 +810,31 @@ cache.set("p:1", new Person("Ada", 30));
 cache.get("p:1", Person.class);
 
 // Generic types a raw Class can't express:
-Map<String, Long> scores = cache.get("scores",
-    new TypeReference<Map<String, Long>>() {});
+Map&lt;String, Long&gt; scores = cache.get("scores",
+    new TypeReference&lt;Map&lt;String, Long&gt;&gt;() {});
 
 </code></pre>
+                     </div>
+                     <div class="snippet-pane" data-lang="node">
+                        <pre><code data-syntax="typescript">class Person {
+  constructor(public name: string, public age: number) {}
+}
+
+cache.set("p:1", new Person("Ada", 30));
+cache.get("p:1");                             // plain object by default
+cache.get("p:1", undefined, { into: Person }); // typed: instanceof Person</code></pre>
                      </div>
                   </div>
                </div>
                <div class="api-group" id="api-atomic">
                   <h3>Add / replace / atomic swap</h3>
+                  <p>"<abbr title="only if Not eXists -- a Redis-style flag name">NX</abbr>" and "<abbr title="only if it already eXists -- a Redis-style flag name">XX</abbr>" below are the classic Redis flag names for these two semantics; see the <a href="#glossary">glossary</a>.</p>
                   <div class="snippet lang-group">
                      <div class="snippet-head">
                         <div class="pillrow" role="tablist" aria-label="Language">
-                           <button class="pill lang-btn active" data-lang-btn="python">Python</button>
-                           <button class="pill lang-btn" data-lang-btn="java">Java</button>
+                           <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
+                           <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
+                           <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -727,6 +848,11 @@ cache.get_set("key", "new")            # atomic swap, returns the old value</cod
 cache.replace("key", "value", ttl);  // set only if present (SET XX)
 cache.getSet("key", "new");          // atomic swap, returns the old value</code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="node">
+                        <pre><code data-syntax="typescript">cache.add("key", "value", { ttl: 60 });      // set only if absent (SET NX)
+cache.replace("key", "value", { ttl: 60 });  // set only if present (SET XX)
+cache.getSet("key", "new");                  // atomic swap, returns the old value</code></pre>
+                     </div>
                   </div>
                </div>
                <div class="api-group" id="api-batch">
@@ -734,8 +860,9 @@ cache.getSet("key", "new");          // atomic swap, returns the old value</code
                   <div class="snippet lang-group">
                      <div class="snippet-head">
                         <div class="pillrow" role="tablist" aria-label="Language">
-                           <button class="pill lang-btn active" data-lang-btn="python">Python</button>
-                           <button class="pill lang-btn" data-lang-btn="java">Java</button>
+                           <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
+                           <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
+                           <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -747,16 +874,21 @@ cache.get_many(["a", "b", "missing"])           # {"a": "1", "b": "2"}</code></p
                         <pre><code data-syntax="java">cache.setAll(Map.of("a", "1", "b", "2"), ttl);   // single transaction
 cache.getAll(List.of("a", "b", "missing"));       // {a=1, b=2}</code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="node">
+                        <pre><code data-syntax="typescript">cache.setMany({ a: "1", b: "2" }, { ttl: 60 });   // single transaction
+cache.getMany(["a", "b", "missing"]);              // Map(2) {'a' => '1', 'b' => '2'}</code></pre>
+                     </div>
                   </div>
                </div>
                <div class="api-group" id="api-counters">
                   <h3>Atomic counters</h3>
-                  <p>A single SQL <code>UPSERT</code> per call — correct under concurrent access from many threads or processes, never a read-modify-write race.</p>
+                  <p>A single SQL <code>UPSERT</code> (an insert-or-update statement -- see <a href="#glossary">glossary</a>) per call — correct under concurrent access from many threads or processes, never a read-modify-write race.</p>
                   <div class="snippet lang-group">
                      <div class="snippet-head">
                         <div class="pillrow" role="tablist" aria-label="Language">
-                           <button class="pill lang-btn active" data-lang-btn="python">Python</button>
-                           <button class="pill lang-btn" data-lang-btn="java">Java</button>
+                           <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
+                           <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
+                           <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -773,6 +905,12 @@ cache.incr("hits", 5);           // +5
 cache.decr("hits");              // -1
 cache.incrDouble("ratio", 0.5);</code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="node">
+                        <pre><code data-syntax="typescript">cache.incr("hits");              // +1
+cache.incr("hits", 5);           // +5
+cache.decr("hits");              // -1
+cache.incrFloat("ratio", 0.5);</code></pre>
+                     </div>
                   </div>
                </div>
                <div class="api-group" id="api-scan">
@@ -780,8 +918,9 @@ cache.incrDouble("ratio", 0.5);</code></pre>
                   <div class="snippet lang-group">
                      <div class="snippet-head">
                         <div class="pillrow" role="tablist" aria-label="Language">
-                           <button class="pill lang-btn active" data-lang-btn="python">Python</button>
-                           <button class="pill lang-btn" data-lang-btn="java">Java</button>
+                           <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
+                           <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
+                           <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -794,6 +933,11 @@ print(key)
                         <pre><code data-syntax="java">cache.keys("session:*")                // lazy Stream&lt;String&gt;, GLOB syntax
 .forEach(System.out::println);</code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="node">
+                        <pre><code data-syntax="typescript">for (const key of cache.keys("session:*")) {  // lazy generator, GLOB syntax
+  console.log(key);
+}</code></pre>
+                     </div>
                   </div>
                </div>
                <div class="api-group" id="api-stats">
@@ -801,8 +945,9 @@ print(key)
                   <div class="snippet lang-group">
                      <div class="snippet-head">
                         <div class="pillrow" role="tablist" aria-label="Language">
-                           <button class="pill lang-btn active" data-lang-btn="python">Python</button>
-                           <button class="pill lang-btn" data-lang-btn="java">Java</button>
+                           <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
+                           <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
+                           <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -823,6 +968,13 @@ stats.path();
 cache.vacuum();      // reclaim disk space
 cache.close();       // shut down cleanly (or use try-with-resources)</code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="node">
+                        <pre><code data-syntax="typescript">cache.stats();
+// { hits: 42, misses: 3, hitRate: 0.93, keyCount: 12,
+//   sizeBytes: 8291, evictions: 0, path: '...' }
+cache.vacuum();   // reclaim disk space
+cache.close();    // shut down cleanly (or use Symbol.dispose)</code></pre>
+                     </div>
                   </div>
                </div>
                <div class="api-group" id="api-locks">
@@ -831,8 +983,9 @@ cache.close();       // shut down cleanly (or use try-with-resources)</code></pr
                   <div class="snippet lang-group">
                      <div class="snippet-head">
                         <div class="pillrow" role="tablist" aria-label="Language">
-                           <button class="pill lang-btn active" data-lang-btn="python">Python</button>
-                           <button class="pill lang-btn" data-lang-btn="java">Java</button>
+                           <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
+                           <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
+                           <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -846,6 +999,10 @@ do_critical_work()</code></pre>
 }
 </code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="node">
+                        <pre><code data-syntax="typescript">using lock = cache.lock("resource", { timeoutMs: 30_000 });
+doCriticalWork();</code></pre>
+                     </div>
                   </div>
                </div>
                <div class="api-group" id="api-memoize">
@@ -853,8 +1010,9 @@ do_critical_work()</code></pre>
                   <div class="snippet lang-group">
                      <div class="snippet-head">
                         <div class="pillrow" role="tablist" aria-label="Language">
-                           <button class="pill lang-btn active" data-lang-btn="python">Python</button>
-                           <button class="pill lang-btn" data-lang-btn="java">Java</button>
+                           <button class="pill lang-btn active" data-lang-btn="python"><i class="lang-glyph lang-glyph-python" aria-hidden="true"></i>Python</button>
+                           <button class="pill lang-btn" data-lang-btn="java"><i class="lang-glyph lang-glyph-java" aria-hidden="true"></i>Java</button>
+                           <button class="pill lang-btn" data-lang-btn="node"><i class="lang-glyph lang-glyph-node" aria-hidden="true"></i>Node.js</button>
                         </div>
                         <button class="copy-btn" data-copy>Copy</button>
                      </div>
@@ -867,13 +1025,16 @@ def expensive(x):
                         <pre><code data-syntax="java">String result = cache.memoize("expensive:" + x, Duration.ofHours(1),
 () -> compute(x));</code></pre>
                      </div>
+                     <div class="snippet-pane" data-lang="node">
+                        <pre><code data-syntax="typescript">const result = cache.memoize(`expensive:${x}`, 3600, () => compute(x));</code></pre>
+                     </div>
                   </div>
                </div>
             </section>
             <section class="section" id="storage-spec">
                <p class="eyebrow">Cross-language</p>
                <h2>Storage spec &amp; type codes</h2>
-               <p class="lead">Both implementations read and write the identical schema — one SQLite file, WAL mode, <code>PRAGMA busy_timeout=5000</code> so cross-process contention waits instead of failing. Every value is tagged with a <code>value_type</code> code:</p>
+               <p class="lead">Every implementation reads and writes the identical schema — one SQLite file, <abbr title="Write-Ahead Logging">WAL</abbr> mode, <code>PRAGMA busy_timeout=5000</code> so cross-process contention waits instead of failing. Every value is tagged with a <code>value_type</code> code:</p>
                <div class="table-wrap">
                   <table>
                      <thead>
@@ -897,7 +1058,7 @@ def expensive(x):
                         <tr>
                            <td>2</td>
                            <td>Integer</td>
-                           <td>UTF-8 decimal text — <em>not</em> binary. This is what lets <code>incr</code>/<code>decr</code> be one atomic SQL UPSERT in both languages.</td>
+                           <td>UTF-8 decimal text — <em>not</em> binary. This is what lets <code>incr</code>/<code>decr</code> be one atomic SQL <abbr title="Update-or-insert -- a single statement that inserts a new row or updates the existing one">UPSERT</abbr> in every language.</td>
                         </tr>
                         <tr>
                            <td>3</td>
@@ -907,22 +1068,111 @@ def expensive(x):
                         <tr>
                            <td>4</td>
                            <td>JSON</td>
-                           <td>Any object, dict, list, dataclass, POJO, or record</td>
+                           <td>Any object, dict, list, dataclass, POJO, record, or JS object</td>
                         </tr>
                         <tr>
                            <td>5</td>
                            <td>Python pickle</td>
-                           <td>Python-only escape hatch; reading it from Java raises a clear error, never garbage</td>
+                           <td>Python-only escape hatch; reading it from Java or Node.js raises a clear error, never garbage</td>
                         </tr>
                         <tr>
                            <td>6</td>
                            <td>Java serialized</td>
-                           <td>Reserved, never written; reading it from Python raises a clear error</td>
+                           <td>Reserved, never written; reading it from Python or Node.js raises a clear error</td>
                         </tr>
                      </tbody>
                   </table>
                </div>
-               <p>The zero-config default path derivation (<code>&lt;project-id&gt;</code> = SHA-256 of the resolved working directory) is byte-for-byte identical between the two, so both languages land on the same file for the same project directory — see <a href="#where-is-my-data">Where is my data?</a> above.</p>
+               <p>Node.js has a single <code>number</code> type rather than Python's <code>int</code>/<code>float</code> or Java's <code>long</code>/<code>double</code>, so its implementation picks type code 2 vs. 3 by shape (<code>Number.isInteger()</code>) rather than by caller intent, using <code>bigint</code> for integers beyond <code>Number.MAX_SAFE_INTEGER</code>. See <a href="https://github.com/lytecache/lytecache/blob/main/lytecache-node/SPEC.md" target="_blank" rel="noopener">lytecache-node/SPEC.md</a> for the full rules.</p>
+               <p>The zero-config default path derivation (<code>&lt;project-id&gt;</code> = <abbr title="Secure Hash Algorithm, 256-bit -- a one-way fingerprint function">SHA-256</abbr> of the resolved working directory) is byte-for-byte identical across every implementation, so all of them land on the same file for the same project directory — see <a href="#where-is-my-data">Where is my data?</a> above.</p>
+            </section>
+            <section class="section" id="glossary">
+               <p class="eyebrow">Cross-language</p>
+               <h2>Glossary</h2>
+               <p class="lead">This page uses a handful of abbreviations without expanding them inline. Here's what each one means.</p>
+               <div class="table-wrap">
+                  <table>
+                     <thead>
+                        <tr>
+                           <th>Term</th>
+                           <th>Full name</th>
+                           <th>What it means here</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <td><abbr title="Application Programming Interface">API</abbr></td>
+                           <td>Application Programming Interface</td>
+                           <td>The set of methods a library exposes for other code to call — in this case, <code>set</code>/<code>get</code>/<code>incr</code>/etc.</td>
+                        </tr>
+                        <tr>
+                           <td><abbr title="Command-Line Interface">CLI</abbr></td>
+                           <td>Command-Line Interface</td>
+                           <td>A program you run and control from a terminal, as opposed to a GUI.</td>
+                        </tr>
+                        <tr>
+                           <td><abbr title="Time To Live">TTL</abbr></td>
+                           <td>Time To Live</td>
+                           <td>How long a cached value is kept before it's treated as expired.</td>
+                        </tr>
+                        <tr>
+                           <td><abbr title="Least Recently Used">LRU</abbr></td>
+                           <td>Least Recently Used</td>
+                           <td>Eviction policy: when the cache is full, remove the key that hasn't been read or written in the longest time.</td>
+                        </tr>
+                        <tr>
+                           <td><abbr title="Least Frequently Used">LFU</abbr></td>
+                           <td>Least Frequently Used</td>
+                           <td>Eviction policy that removes the key with the fewest accesses. Documented as a future addition, not yet implemented.</td>
+                        </tr>
+                        <tr>
+                           <td><abbr title="Structured Query Language">SQL</abbr></td>
+                           <td>Structured Query Language</td>
+                           <td>The language used to talk to SQLite — every read and write here compiles down to one SQL statement.</td>
+                        </tr>
+                        <tr>
+                           <td><abbr title="Write-Ahead Logging">WAL</abbr></td>
+                           <td>Write-Ahead Logging</td>
+                           <td>A SQLite journaling mode that lets readers and a writer access the database file concurrently without blocking each other.</td>
+                        </tr>
+                        <tr>
+                           <td><abbr title="JavaScript Object Notation">JSON</abbr></td>
+                           <td>JavaScript Object Notation</td>
+                           <td>The plain-text format used to store objects, arrays, and other structured values portably across all three languages.</td>
+                        </tr>
+                        <tr>
+                           <td><abbr title="Plain Old Java Object">POJO</abbr></td>
+                           <td>Plain Old Java Object</td>
+                           <td>An ordinary Java object with no special base class, interface, or framework annotation required.</td>
+                        </tr>
+                        <tr>
+                           <td>GLOB</td>
+                           <td>Global (pattern matching)</td>
+                           <td>Shell-style wildcard syntax (<code>*</code>, <code>?</code>, <code>[...]</code>) used by <code>keys(pattern)</code> to match key names.</td>
+                        </tr>
+                        <tr>
+                           <td>NX / XX</td>
+                           <td>Not eXists / already eXists</td>
+                           <td>Redis-style flag names: <code>add()</code> behaves like <code>SET NX</code> (only if absent), <code>replace()</code> like <code>SET XX</code> (only if present).</td>
+                        </tr>
+                        <tr>
+                           <td>UPSERT</td>
+                           <td>Update + Insert</td>
+                           <td>A single SQL statement that inserts a new row or updates the existing one, used so counters and locks stay atomic under concurrency.</td>
+                        </tr>
+                        <tr>
+                           <td><abbr title="CommonJS">CJS</abbr> / <abbr title="ECMAScript Modules">ESM</abbr></td>
+                           <td>CommonJS / ECMAScript Modules</td>
+                           <td>Node.js's two module systems (<code>require()</code> vs. <code>import</code>). The Node.js package ships both.</td>
+                        </tr>
+                        <tr>
+                           <td><abbr title="Secure Hash Algorithm, 256-bit">SHA-256</abbr></td>
+                           <td>Secure Hash Algorithm, 256-bit</td>
+                           <td>A one-way fingerprint function used to derive each project's default cache filename from its working directory.</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
             </section>
          </main>
       </div>
@@ -978,8 +1228,11 @@ def expensive(x):
          
            /* ---------- global language toggle (syncs every snippet on the page) ---------- */
            var currentLang = localStorage.getItem("lc-lang") || "python";
-           var INSTALL_TO_LANG = { pip: "python", gradle: "java", maven: "java" };
-           var lastJavaInstall = "gradle"; // which of gradle/maven to show when switching back to Java
+           var INSTALL_TO_LANG = { pip: "python", gradle: "java", maven: "java", npm: "node" };
+           // Which install method to show when switching back to a language with more than one
+           // (only Java currently has two -- Gradle vs Maven); Python and Node.js each have one.
+           var lastInstallForLang = { python: "pip", java: "gradle", node: "npm" };
+           var termTitles = { python: "quickstart.py", java: "Quickstart.java", node: "quickstart.ts" };
            function applyLang(lang, persist){
              currentLang = lang;
              document.querySelectorAll(".lang-group").forEach(function(group){
@@ -990,16 +1243,15 @@ def expensive(x):
                  pane.classList.toggle("is-active", pane.getAttribute("data-lang") === lang);
                });
              });
-             document.getElementById("termTitle").textContent = lang === "java" ? "Quickstart.java" : "quickstart.py";
+             document.getElementById("termTitle").textContent = termTitles[lang] || termTitles.python;
              if (terminalDemo) terminalDemo.showLang(lang);
-             // Keep the hero install-method pills (pip/Gradle/Maven) in step with the language
+             // Keep the hero install-method pills (pip/Gradle/Maven/npm) in step with the language
              // toggle too, so picking a language anywhere on the page also switches how you'd
              // install it, and vice versa (wired below).
              var activeInstall = document.querySelector(".install-pill.active");
              var activeInstallLang = activeInstall ? INSTALL_TO_LANG[activeInstall.getAttribute("data-install")] : null;
              if (activeInstallLang !== lang){
-               var nextInstall = lang === "python" ? "pip" : lastJavaInstall;
-               setInstallMethod(nextInstall);
+               setInstallMethod(lastInstallForLang[lang] || "pip");
              }
              if (persist) localStorage.setItem("lc-lang", lang);
            }
@@ -1008,8 +1260,8 @@ def expensive(x):
              if (btn) applyLang(btn.getAttribute("data-lang-btn"), true);
            });
            applyLang(currentLang, false);
-         
-           /* ---------- install method toggle (3-way: pip / Gradle / Maven) ---------- */
+
+           /* ---------- install method toggle (4-way: pip / Gradle / Maven / npm) ---------- */
            function setInstallMethod(target){
              document.querySelectorAll(".install-pill").forEach(function(p){
                p.classList.toggle("active", p.getAttribute("data-install") === target);
@@ -1017,7 +1269,8 @@ def expensive(x):
              document.querySelectorAll("[data-install-pane]").forEach(function(pane){
                pane.classList.toggle("is-active", pane.getAttribute("data-install-pane") === target);
              });
-             if (target === "gradle" || target === "maven") lastJavaInstall = target;
+             var lang = INSTALL_TO_LANG[target];
+             if (lang) lastInstallForLang[lang] = target;
            }
            document.addEventListener("click", function(e){
              var btn = e.target.closest("[data-install]");
@@ -1095,10 +1348,12 @@ def expensive(x):
            var KEYWORDS = {
              python: ["def","class","return","import","from","with","as","for","in","if","elif","else","None","True","False","lambda","try","except","finally","not","and","or","is","yield","raise","pass","self","@dataclass"],
              java: ["public","private","protected","static","final","void","new","class","record","interface","try","catch","finally","return","import","package","this","extends","implements","throws","null","true","false","long","double","int","String","var"],
+             typescript: ["const","let","var","function","return","import","from","export","default","new","class","interface","type","extends","implements","try","catch","finally","for","of","in","if","else","null","undefined","true","false","async","await","using","this","void","public","private","readonly"],
              bash: [],
              groovy: [],
              xml: []
            };
+           KEYWORDS.node = KEYWORDS.typescript; // the hero demo's language key is "node", its syntax is TS
            function highlight(raw, lang){
              var kws = KEYWORDS[lang] || [];
              // Single left-to-right pass over the *original* source: a master regex finds the next
@@ -1163,6 +1418,15 @@ def expensive(x):
                '    cache.incr("hits");',
                '    // 1',
                '}'
+             ],
+             node: [
+               'import { LyteCache } from "lytecache";','',
+               'const cache = new LyteCache();',
+               'cache.set("user:42", { name: "Ada" }, { ttl: 300 });',
+               'cache.get("user:42");',
+               '// { name: \'Ada\' }',
+               'cache.incr("hits");',
+               '// 1'
              ]
            };
            var termEl = document.getElementById("termOutput");
@@ -1182,7 +1446,7 @@ def expensive(x):
                showLang: function(lang){ renderDemo(demos[lang].join("\n"), lang, false); }
              };
            } else {
-             var seq = ["python", "java"];
+             var seq = ["python", "java", "node"];
              var seqIdx = 0;
              var typer = null;
              var advanceTimer = null;
@@ -1209,7 +1473,7 @@ def expensive(x):
              terminalDemo = {
                showLang: function(lang){ typeLang(lang); }
              };
-             typeLang(currentLang === "java" ? "java" : "python");
+             typeLang(seq.indexOf(currentLang) >= 0 ? currentLang : "python");
            }
          })();
       </script>

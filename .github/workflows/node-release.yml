@@ -1,0 +1,60 @@
+name: Release Node to npm
+
+on:
+  push:
+    tags:
+      # Distinct prefix from the Python (v*.*.*) and Java (java-v*) release tags, so tagging one
+      # package's release can never accidentally trigger another's workflow.
+      - "node-v*"
+
+defaults:
+  run:
+    working-directory: lytecache-node
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      id-token: write # required for npm provenance
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check, lint, build, test
+        run: |
+          npm run typecheck
+          npm run lint
+          npm run build
+          npm test
+
+      - name: Publish to npm with provenance
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: |
+            # lytecache (Node.js) ${{ github.ref_name }}
+
+            See lytecache-node/README.md for usage and lytecache-node/SPEC.md for the storage format.
+
+            ## Installation
+
+            ```bash
+            npm install lytecache
+            ```
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
