@@ -40,7 +40,18 @@ jobs:
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
           ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
           ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
-        run: ./gradlew publishMavenJavaPublicationToSonatypeCentralRepository --no-daemon
+        # publishMavenJavaPublicationToSonatypeCentralRepository (plain maven-publish) only
+        # uploads artifacts into a new staging repository -- it never calls Sonatype's required
+        # follow-up close/release API, so the upload would succeed while the deployment stayed
+        # invisible forever on both the Sonatype Deployments page and Maven Central itself. The
+        # gradle-nexus/publish-plugin task chain below drives that whole lifecycle instead.
+        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository --no-daemon
+
+      - name: Determine release version
+        # github.ref_name is the full tag ("java-v0.2.0"), not the bare artifact version
+        # ("0.2.0") that actually appears in Gradle's output filenames and Maven coordinates.
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#java-v}" >> "$GITHUB_OUTPUT"
 
       - name: Create release notes
         run: |
@@ -52,14 +63,14 @@ jobs:
           ## Installation
 
           ```gradle
-          implementation 'io.lytecache:lytecache:${{ github.ref_name }}'
+          implementation 'io.github.lytecache:lytecache:${{ steps.version.outputs.version }}'
           ```
 
           ## Artifacts
 
-          - lytecache-${{ github.ref_name }}.jar
-          - lytecache-${{ github.ref_name }}-sources.jar
-          - lytecache-${{ github.ref_name }}-javadoc.jar
+          - lytecache-${{ steps.version.outputs.version }}.jar
+          - lytecache-${{ steps.version.outputs.version }}-sources.jar
+          - lytecache-${{ steps.version.outputs.version }}-javadoc.jar
           EOF
 
       - name: Create GitHub release

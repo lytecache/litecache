@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file.
 
-## [0.2.0] - Unreleased
+## [0.2.0] - 2026-07-07
 
 Initial release. Embedded, Redis-like caching backed by SQLite (via `org.xerial:sqlite-jdbc`),
 matching the storage format and semantics of the Python, Node.js, Go, and PHP implementations in

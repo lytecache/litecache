@@ -2,6 +2,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
+    id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
 }
 
 group = "io.github.lytecache"
@@ -106,22 +107,28 @@ publishing {
             url = uri(layout.buildDirectory.dir("repo"))
         }
 
-        // Sonatype Central Portal (https://central.sonatype.com), via its OSSRH-compatible staging
-        // endpoint. Only registered when credentials are supplied (CI release job), so plain
-        // `./gradlew build` / `publishToMavenLocal` never require them.
-        val sonatypeUsername = providers.gradleProperty("sonatypeUsername").orNull
-            ?: System.getenv("SONATYPE_USERNAME")
-        val sonatypePassword = providers.gradleProperty("sonatypePassword").orNull
-            ?: System.getenv("SONATYPE_PASSWORD")
-        if (sonatypeUsername != null && sonatypePassword != null) {
-            maven {
-                name = "SonatypeCentral"
-                url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
-                credentials {
-                    username = sonatypeUsername
-                    password = sonatypePassword
-                }
-            }
+        // Sonatype Central Portal itself is configured below via nexusPublishing, not here --
+        // plain maven-publish can only upload artifacts into a new staging repository, it has no
+        // way to make the mandatory follow-up call that actually closes and releases that staging
+        // repository (without it, the upload silently succeeds but never becomes visible on
+        // Sonatype's Deployments page or on Maven Central at all). The gradle-nexus/publish-plugin
+        // task chain (publishToSonatype + closeAndReleaseSonatypeStagingRepository) drives that
+        // whole lifecycle instead of a plain publish task.
+    }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            // The OSSRH-compatible staging endpoint (OSSRH itself shut down June 2025; this
+            // bridge is Sonatype's documented continuation path for maven-publish-based setups).
+            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
+            // Same credential-optional pattern as elsewhere in this file: absent locally, supplied
+            // as CI secrets during a release. Property/Provider values stay unresolved until a
+            // Sonatype-specific task actually runs, so plain `./gradlew build` never needs them.
+            username.set(providers.gradleProperty("sonatypeUsername").orElse(providers.environmentVariable("SONATYPE_USERNAME")))
+            password.set(providers.gradleProperty("sonatypePassword").orElse(providers.environmentVariable("SONATYPE_PASSWORD")))
         }
     }
 }
