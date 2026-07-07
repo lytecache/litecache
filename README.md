@@ -18,7 +18,7 @@ This repository is a **monorepo** containing independent, same-spec implementati
 | Package | Language | Install | Docs |
 |---|---|---|---|
 | [`lytecache-python/`](lytecache-python/) | ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white) Python 3.9+ | `pip install lytecache` | [lytecache-python/README.md](lytecache-python/README.md) |
-| [`lytecache-java/`](lytecache-java/) | ![Java](https://img.shields.io/badge/-Java-E76F00?style=flat-square&logo=openjdk&logoColor=white) Java 17+ | `io.lytecache:lytecache` (Gradle/Maven) | [lytecache-java/README.md](lytecache-java/README.md) |
+| [`lytecache-java/`](lytecache-java/) | ![Java](https://img.shields.io/badge/-Java-E76F00?style=flat-square&logo=openjdk&logoColor=white) Java 17+ | `io.github.lytecache:lytecache` (Gradle/Maven) | [lytecache-java/README.md](lytecache-java/README.md) |
 | [`lytecache-node/`](lytecache-node/) | ![Node.js](https://img.shields.io/badge/-Node.js-339933?style=flat-square&logo=node.js&logoColor=white) Node.js 18+ | `npm install lytecache` | [lytecache-node/README.md](lytecache-node/README.md) |
 | [`lytecache-go/`](lytecache-go/) | ![Go](https://img.shields.io/badge/-Go-00ADD8?style=flat-square&logo=go&logoColor=white) Go 1.25+ | `go get github.com/lytecache/lytecache-go` | [lytecache-go/README.md](lytecache-go/README.md) |
 | [`lytecache-php/`](lytecache-php/) | ![PHP](https://img.shields.io/badge/-PHP-777BB4?style=flat-square&logo=php&logoColor=white) PHP 8.2+ | `composer require lytecache/lytecache` | [lytecache-php/README.md](lytecache-php/README.md) |

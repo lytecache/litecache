@@ -21,16 +21,16 @@ LyteCache is an embedded, production-grade caching library for Java applications
 ### Gradle
 
 ```gradle
-implementation 'io.lytecache:lytecache:0.1.0'
+implementation 'io.github.lytecache:lytecache:0.2.0'
 ```
 
 ### Maven
 
 ```xml
 <dependency>
-    <groupId>io.lytecache</groupId>
+    <groupId>io.github.lytecache</groupId>
     <artifactId>lytecache</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 

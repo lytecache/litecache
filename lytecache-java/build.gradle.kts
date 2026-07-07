@@ -4,8 +4,8 @@ plugins {
     signing
 }
 
-group = "io.lytecache"
-version = "0.1.0"
+group = "io.github.lytecache"
+version = "0.2.0"
 
 repositories {
     mavenCentral()
