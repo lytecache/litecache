@@ -16,7 +16,7 @@ import "github.com/lytecache/lytecache-go"
 cache, err := lytecache.New() // no path, no setup -- just works
 defer cache.Close()
 
-cache.Set("user:42", map[string]any{"name": "Ada"}, lytecache.TTL(5*time.Minute))
+cache.Set("user:42", map[string]any{"name": "Samson"}, lytecache.TTL(5*time.Minute))
 
 var user map[string]any
 found, err := cache.Get("user:42", &user)

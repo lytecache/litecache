@@ -14,8 +14,8 @@ npm install lytecache
 import { LyteCache } from "lytecache";
 
 const cache = new LyteCache(); // no path, no setup -- just works
-cache.set("user:42", { name: "Ada" }, { ttl: 300 });
-cache.get("user:42"); // { name: "Ada" }
+cache.set("user:42", { name: "Samson" }, { ttl: 300 });
+cache.get("user:42"); // { name: "Samson" }
 cache.incr("hits"); // 1
 ```
 

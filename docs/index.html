@@ -145,6 +145,11 @@
          }
          .nav-group a:hover{ color:var(--text); text-decoration:none; }
          .nav-group a.active{ color:var(--accent); border-left-color:var(--accent); font-weight:600; }
+         .soon-tag{
+         display:inline-block; font-family:var(--font-display); font-size:.6rem; font-weight:700;
+         letter-spacing:.04em; text-transform:uppercase; color:var(--text-dim); background:var(--surface-2);
+         border:1px solid var(--border); border-radius:999px; padding:.05em .5em; margin-left:.4em; vertical-align:1px;
+         }
          main{ min-width:0; padding:0 var(--space-8) var(--space-24); }
          .section{ max-width:var(--content-w); padding-top:var(--space-16); scroll-margin-top:72px; }
          .section + .section{ border-top:1px solid var(--border); }
@@ -214,6 +219,21 @@
          .termcard pre{ margin:0; padding:1.1em 1.2em; min-height:11.5em; }
          .termcard .cursor{ display:inline-block; width:.55em; height:1.05em; background:var(--accent); vertical-align:text-bottom; animation:blink 1s steps(1) infinite; }
          .term-output{ display:block; white-space:pre-wrap; color:var(--text); }
+         /* Linux-terminal variant (the CLI demo): a real terminal doesn't follow the
+         page's light/dark toggle, so this commits to one dark look always, and swaps
+         macOS-style traffic lights for GNOME/KDE-style right-aligned window controls. */
+         .termcard.linux-term{ background:#0d1117; border-color:#30363d; box-shadow:0 12px 32px -12px rgba(0,0,0,0.55); }
+         .termcard.linux-term .termcard-bar{ background:#161b22; border-bottom-color:#30363d; }
+         .termcard.linux-term .termcard-title{ margin-left:0; color:#8b949e; font-weight:600; }
+         .termcard.linux-term .win-controls{ margin-left:auto; display:flex; gap:.6em; color:#8b949e; font-size:.8rem; line-height:1; }
+         .termcard.linux-term pre{ background:#0d1117; }
+         .termcard.linux-term .term-output{ color:#c9d1d9; }
+         .termcard.linux-term .cursor{ background:#c9d1d9; }
+         .termcard.linux-term .tok-prompt-user{ color:#3fb950; font-weight:700; }
+         .termcard.linux-term .tok-prompt-path{ color:#58a6ff; font-weight:700; }
+         .termcard.linux-term .tok-str{ color:#7ee787; }
+         .termcard.linux-term .tok-num{ color:#79c0ff; }
+         .termcard.linux-term .tok-com{ color:#8b949e; }
          .path-example{
          background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius);
          padding:1em 1.2em; font-size:.85rem;
@@ -375,6 +395,10 @@
                <a href="#storage-spec">Storage spec &amp; type codes</a>
                <a href="#glossary">Glossary</a>
             </div>
+            <div class="nav-group">
+               <div class="nav-group-title">Tooling</div>
+               <a href="#cli">CLI <span class="soon-tag">soon</span></a>
+            </div>
          </aside>
          <main id="top">
             <section class="hero" aria-label="Introduction">
@@ -530,8 +554,8 @@ $cache->incr("hits");</code></pre>
                      <pre><code data-syntax="python">from lytecache import LyteCache
 
 cache = LyteCache()                     # no path, no setup -- just works
-cache.set("user:42", {"name": "Ada"}, ttl=300)
-cache.get("user:42")                    # {"name": "Ada"}
+cache.set("user:42", {"name": "Samson"}, ttl=300)
+cache.get("user:42")                    # {"name": "Samson"}
 cache.incr("hits")                      # 1</code></pre>
                   </div>
                   <div class="snippet-pane" data-lang="java">
@@ -539,8 +563,8 @@ cache.incr("hits")                      # 1</code></pre>
     import java.time.Duration;
 
     try (LyteCache cache = new LyteCache()) {
-        cache.set("user:42", "Ada", Duration.ofMinutes(5));
-        cache.getString("user:42");          // "Ada"
+        cache.set("user:42", "Samson", Duration.ofMinutes(5));
+        cache.getString("user:42");          // "Samson"
         cache.incr("hits");                  // 1
 }</code></pre>
                   </div>
@@ -548,25 +572,25 @@ cache.incr("hits")                      # 1</code></pre>
                      <pre><code data-syntax="typescript">import { LyteCache } from "lytecache";
 
 const cache = new LyteCache();               // no path, no setup -- just works
-cache.set("user:42", { name: "Ada" }, { ttl: 300 });
-cache.get("user:42");                        // { name: "Ada" }
+cache.set("user:42", { name: "Samson" }, { ttl: 300 });
+cache.get("user:42");                        // { name: "Samson" }
 cache.incr("hits");                          // 1</code></pre>
                   </div>
                   <div class="snippet-pane" data-lang="go">
                      <pre><code data-syntax="go">cache, _ := lytecache.New()          // no path, no setup -- just works
 defer cache.Close()
 
-cache.Set("user:42", map[string]any{"name": "Ada"}, lytecache.TTL(5*time.Minute))
+cache.Set("user:42", map[string]any{"name": "Samson"}, lytecache.TTL(5*time.Minute))
 var user map[string]any
-cache.Get("user:42", &amp;user)                // {"name": "Ada"}
+cache.Get("user:42", &amp;user)                // {"name": "Samson"}
 cache.Incr("hits", 1)                        // 1</code></pre>
                   </div>
                   <div class="snippet-pane" data-lang="php">
                      <pre><code data-syntax="php">use Lytecache\LyteCache;
 
 $cache = new LyteCache();               // no path, no setup -- just works
-$cache->set("user:42", ["name" => "Ada"], ttl: 300);
-$cache->get("user:42");                 // ["name" => "Ada"]
+$cache->set("user:42", ["name" => "Samson"], ttl: 300);
+$cache->get("user:42");                 // ["name" => "Samson"]
 $cache->incr("hits");                   // 1</code></pre>
                   </div>
                </div>
@@ -966,14 +990,14 @@ class Person:
     name: str
     age: int
 
-cache.set("p:1", Person("Ada", 30))
+cache.set("p:1", Person("Samson", 30))
 cache.get("p:1")                # plain dict by default
-cache.get("p:1", cls=Person)    # typed: Person(name="Ada", age=30)</code></pre>
+cache.get("p:1", cls=Person)    # typed: Person(name="Samson", age=30)</code></pre>
                      </div>
                      <div class="snippet-pane" data-lang="java">
                         <pre><code data-syntax="java">record Person(String name, int age) {}
 
-cache.set("p:1", new Person("Ada", 30));
+cache.set("p:1", new Person("Samson", 30));
 cache.get("p:1", Person.class);
 
 // Generic types a raw Class can't express:
@@ -987,7 +1011,7 @@ Map&lt;String, Long&gt; scores = cache.get("scores",
   constructor(public name: string, public age: number) {}
 }
 
-cache.set("p:1", new Person("Ada", 30));
+cache.set("p:1", new Person("Samson", 30));
 cache.get("p:1");                             // plain object by default
 cache.get("p:1", undefined, { into: Person }); // typed: instanceof Person</code></pre>
                      </div>
@@ -997,7 +1021,7 @@ cache.get("p:1", undefined, { into: Person }); // typed: instanceof Person</code
     Age  int    `json:"age"`
 }
 
-cache.Set("p:1", Person{Name: "Ada", Age: 30})
+cache.Set("p:1", Person{Name: "Samson", Age: 30})
 var p Person
 found, _ := cache.Get("p:1", &amp;p) // typed: struct fields via encoding/json tags</code></pre>
                      </div>
@@ -1009,9 +1033,9 @@ found, _ := cache.Get("p:1", &amp;p) // typed: struct fields via encoding/json t
     ) {}
 }
 
-$cache->set("p:1", new Person("Ada", 30));
+$cache->set("p:1", new Person("Samson", 30));
 $cache->get("p:1");                        // plain array by default
-$cache->get("p:1", class: Person::class);  // typed: Person(name: "Ada", age: 30)</code></pre>
+$cache->get("p:1", class: Person::class);  // typed: Person(name: "Samson", age: 30)</code></pre>
                      </div>
                   </div>
                </div>
@@ -1450,6 +1474,125 @@ def expensive(x):
                   </table>
                </div>
             </section>
+            <section class="section" id="cli">
+               <p class="eyebrow">Tooling</p>
+               <h2>Command-line interface <span class="soon-tag">coming soon</span></h2>
+               <div class="callout">
+                  <p class="eyebrow">Not released yet</p>
+                  <p>The <code>lytecache</code> CLI is built and tested but not yet published -- this section documents what's shipping. Watch <a href="https://github.com/lytecache/lytecache-cli" target="_blank" rel="noopener">github.com/lytecache/lytecache-cli</a> for the first release.</p>
+               </div>
+               <p class="lead">Inspect and manipulate any lytecache database file from a shell -- like <code>redis-cli</code>, but for a file instead of a server. It's built entirely on <a href="https://github.com/lytecache/lytecache-go" target="_blank" rel="noopener">lytecache-go</a>'s public API, so it can read and write a file created by any of the five languages above.</p>
+               <h3>Install</h3>
+               <div class="snippet">
+                  <div class="snippet-head">
+                     <div class="pillrow" role="tablist" aria-label="Operating system">
+                        <button class="pill os-btn active" data-os-btn="mac">macOS / Linux</button>
+                        <button class="pill os-btn" data-os-btn="windows">Windows</button>
+                        <button class="pill os-btn" data-os-btn="source">From source</button>
+                     </div>
+                     <button class="copy-btn" data-copy>Copy</button>
+                  </div>
+                  <div class="snippet-pane is-active" data-os="mac">
+                     <pre><code data-syntax="bash">brew install lytecache/tap/lytecache
+# or, without Homebrew:
+curl -fsSL https://raw.githubusercontent.com/lytecache/lytecache-cli/main/install.sh | sh</code></pre>
+                  </div>
+                  <div class="snippet-pane" data-os="windows">
+                     <pre><code data-syntax="bash">scoop bucket add lytecache https://github.com/lytecache/scoop-bucket
+scoop install lytecache</code></pre>
+                  </div>
+                  <div class="snippet-pane" data-os="source">
+                     <pre><code data-syntax="bash">go install github.com/lytecache/lytecache-cli/cmd/lytecache@latest</code></pre>
+                  </div>
+               </div>
+               <p>Prebuilt binaries, SHA-256 checksums, and <code>.deb</code>/<code>.rpm</code> packages are attached to every <a href="https://github.com/lytecache/lytecache-cli/releases" target="_blank" rel="noopener">GitHub release</a>; a winget manifest ships the same way, pending submission to <code>microsoft/winget-pkgs</code>.</p>
+               <h3>A session</h3>
+               <div class="termcard linux-term" aria-label="Animated terminal session demo">
+                  <div class="termcard-bar">
+                     <span class="termcard-title">samson@lytecache: ~</span>
+                     <span class="win-controls" aria-hidden="true"><span>&#8722;</span><span>&#9633;</span><span>&#10005;</span></span>
+                  </div>
+                  <pre><code class="term-output" id="cliTermOutput"></code></pre>
+               </div>
+               <noscript>
+                  <div class="snippet">
+                     <pre><code data-syntax="bash">samson@lytecache:~$ lytecache set user:42 '{"name":"Samson"}'
+samson@lytecache:~$ lytecache get user:42
+{
+  "name": "Samson"
+}
+samson@lytecache:~$ lytecache incr hits
+1
+samson@lytecache:~$ lytecache keys 'user:*'
+user:42
+samson@lytecache:~$ lytecache            # no args -&gt; interactive REPL
+lytecache (cache.db | ns: default)&gt; get user:42
+{
+  "name": "Samson"
+}
+lytecache (cache.db | ns: default)&gt; exit
+samson@lytecache:~$ </code></pre>
+                  </div>
+               </noscript>
+               <p>One-shot commands (script-friendly, shown above) and the interactive REPL share the exact same command tree -- the REPL just opens the database once for the whole session instead of reopening it per command. Command names are case-insensitive in the REPL, and Ctrl-C cancels the current line without leaving.</p>
+               <h3>Commands</h3>
+               <div class="table-wrap">
+                  <table>
+                     <thead>
+                        <tr><th>Command</th><th>Description</th></tr>
+                     </thead>
+                     <tbody>
+                        <tr><td><code>get &lt;key&gt;</code></td><td>Print a value -- JSON pretty-printed by default, <code>--raw</code> for exact bytes</td></tr>
+                        <tr><td><code>set &lt;key&gt; [value]</code></td><td>Set a value; type is inferred unless <code>--type</code> forces it</td></tr>
+                        <tr><td><code>del &lt;key&gt;...</code></td><td>Delete one or more keys; prints how many actually existed</td></tr>
+                        <tr><td><code>exists &lt;key&gt;</code></td><td>Prints <code>1</code>/<code>0</code>; exit code matches</td></tr>
+                        <tr><td><code>ttl</code> / <code>expire</code> / <code>persist</code> / <code>touch</code></td><td>Inspect and manage a key's TTL</td></tr>
+                        <tr><td><code>incr</code> / <code>decr</code></td><td>Atomically adjust a counter; prints the new value</td></tr>
+                        <tr><td><code>keys [pattern]</code> (alias <code>scan</code>)</td><td>List matching keys; <code>--long</code> adds type/ttl/size columns</td></tr>
+                        <tr><td><code>stats</code> (alias <code>info</code>)</td><td>Key count, size, hit/miss counters, evictions, path</td></tr>
+                        <tr><td><code>flush</code></td><td>Delete every key in the current namespace (prompts unless <code>--yes</code>)</td></tr>
+                        <tr><td><code>maintain</code> / <code>vacuum</code></td><td>Run a maintenance pass / reclaim disk space</td></tr>
+                        <tr><td><code>which</code></td><td>Print the resolved database path and whether it exists</td></tr>
+                        <tr><td><code>dump &lt;key&gt;</code></td><td>Raw row metadata -- the debugging view</td></tr>
+                        <tr><td><code>watch [interval]</code></td><td>Redraw <code>stats</code> every interval seconds until Ctrl-C</td></tr>
+                     </tbody>
+                  </table>
+               </div>
+               <h3>Exit codes</h3>
+               <p>Scripts can rely on these without parsing output:</p>
+               <div class="table-wrap">
+                  <table>
+                     <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+                     <tbody>
+                        <tr><td>0</td><td>Success</td></tr>
+                        <tr><td>1</td><td>A read found nothing (<code>(nil)</code>), or a boolean result was false</td></tr>
+                        <tr><td>2</td><td>Usage error (bad arguments/flags)</td></tr>
+                        <tr><td>3</td><td>Database error</td></tr>
+                     </tbody>
+                  </table>
+               </div>
+               <h3>Cross-language example</h3>
+               <p>Since every implementation shares one on-disk format (see <a href="#storage-spec">Storage spec</a> above), the CLI can inspect a cache file written by any of them. A Python process wrote this:</p>
+               <div class="snippet">
+                  <div class="snippet-head">
+                     <span class="install-label">Python</span>
+                     <button class="copy-btn" data-copy>Copy</button>
+                  </div>
+                  <pre><code data-syntax="python">cache.set("config", {"theme": "dark", "timeout": 30})</code></pre>
+               </div>
+               <div class="snippet">
+                  <div class="snippet-head">
+                     <span class="install-label">Terminal</span>
+                     <button class="copy-btn" data-copy>Copy</button>
+                  </div>
+                  <pre><code data-syntax="bash">$ lytecache --db ~/.cache/lytecache/abc123.db get config
+{
+  "theme": "dark",
+  "timeout": 30
+}</code></pre>
+               </div>
+               <p>No Python installation, no shared server, no export step -- just the same SQLite file on disk. Type codes 5 (Python pickle) and 6 (Java serialized) -- values the CLI can't decode -- render as <code>(non-portable value: python-pickle, N bytes)</code> rather than erroring or dumping garbage.</p>
+            </section>
          </main>
       </div>
       <footer>
@@ -1555,7 +1698,23 @@ def expensive(x):
              setInstallMethod(target);
              applyLang(INSTALL_TO_LANG[target], true);
            });
-         
+
+           /* ---------- CLI install OS toggle (local to its own snippet, not the
+              global language picker -- an OS isn't a language) ---------- */
+           document.addEventListener("click", function(e){
+             var btn = e.target.closest("[data-os-btn]");
+             if (!btn) return;
+             var snippet = btn.closest(".snippet");
+             if (!snippet) return;
+             var target = btn.getAttribute("data-os-btn");
+             snippet.querySelectorAll(".os-btn").forEach(function(b){
+               b.classList.toggle("active", b.getAttribute("data-os-btn") === target);
+             });
+             snippet.querySelectorAll("[data-os]").forEach(function(pane){
+               pane.classList.toggle("is-active", pane.getAttribute("data-os") === target);
+             });
+           });
+
            /* ---------- copy buttons ---------- */
            function copyText(text){
              if (navigator.clipboard && window.isSecureContext){
@@ -1681,18 +1840,18 @@ def expensive(x):
              python: [
                'from lytecache import LyteCache','',
                'cache = LyteCache()',
-               'cache.set("user:42", {"name": "Ada"}, ttl=300)',
+               'cache.set("user:42", {"name": "Samson"}, ttl=300)',
                'cache.get("user:42")',
-               '# {\'name\': \'Ada\'}',
+               '# {\'name\': \'Samson\'}',
                'cache.incr("hits")',
                '# 1'
              ],
              java: [
                'import io.lytecache.LyteCache;','',
                'try (LyteCache cache = new LyteCache()) {',
-               '    cache.set("user:42", "Ada", Duration.ofMinutes(5));',
+               '    cache.set("user:42", "Samson", Duration.ofMinutes(5));',
                '    cache.getString("user:42");',
-               '    // "Ada"',
+               '    // "Samson"',
                '    cache.incr("hits");',
                '    // 1',
                '}'
@@ -1700,27 +1859,27 @@ def expensive(x):
              node: [
                'import { LyteCache } from "lytecache";','',
                'const cache = new LyteCache();',
-               'cache.set("user:42", { name: "Ada" }, { ttl: 300 });',
+               'cache.set("user:42", { name: "Samson" }, { ttl: 300 });',
                'cache.get("user:42");',
-               '// { name: \'Ada\' }',
+               '// { name: \'Samson\' }',
                'cache.incr("hits");',
                '// 1'
              ],
              go: [
                'cache, _ := lytecache.New()','',
-               'cache.Set("user:42", map[string]any{"name": "Ada"},',
+               'cache.Set("user:42", map[string]any{"name": "Samson"},',
                '    lytecache.TTL(5*time.Minute))',
                'cache.Get("user:42", &user)',
-               '// map[name:Ada]',
+               '// map[name:Samson]',
                'cache.Incr("hits", 1)',
                '// 1'
              ],
              php: [
                'use Lytecache\\LyteCache;','',
                '$cache = new LyteCache();',
-               '$cache->set("user:42", ["name" => "Ada"], ttl: 300);',
+               '$cache->set("user:42", ["name" => "Samson"], ttl: 300);',
                '$cache->get("user:42");',
-               '// ["name" => "Ada"]',
+               '// ["name" => "Samson"]',
                '$cache->incr("hits");',
                '// 1'
              ]
@@ -1770,6 +1929,68 @@ def expensive(x):
                showLang: function(lang){ typeLang(lang); }
              };
              typeLang(seq.indexOf(currentLang) >= 0 ? currentLang : "python");
+           }
+
+           /* ---------- CLI terminal typing demo (same technique as the hero's, but a
+              single looping session instead of cycling through languages) ---------- */
+           var cliTermEl = document.getElementById("cliTermOutput");
+           if (cliTermEl){
+             var cliDemo = [
+               'samson@lytecache:~$ lytecache set user:42 \'{"name":"Samson"}\'',
+               'samson@lytecache:~$ lytecache get user:42',
+               '{',
+               '  "name": "Samson"',
+               '}',
+               'samson@lytecache:~$ lytecache incr hits',
+               '1',
+               'samson@lytecache:~$ lytecache keys \'user:*\'',
+               'user:42',
+               'samson@lytecache:~$ lytecache            # no args -> interactive REPL',
+               'lytecache (cache.db | ns: default)> get user:42',
+               '{',
+               '  "name": "Samson"',
+               '}',
+               'lytecache (cache.db | ns: default)> exit',
+               'samson@lytecache:~$ '
+             ].join("\n");
+             // A shell prompt ("user@host:path$ ") gets its own two-tone coloring
+             // (green user@host, blue path) -- distinct from, and layered on top of,
+             // the shared highlight() used for the rest of the line and every other
+             // snippet on the page, so this doesn't touch that shared function at all.
+             var promptPattern = /^([\w.-]+@[\w.-]+)(:[^\s$#]*)([$#] ?)(.*)$/;
+             function renderCliDemo(text, withCursor){
+               var html = text.split("\n").map(function(line){
+                 var m = line.match(promptPattern);
+                 if (!m) return highlight(line, "bash");
+                 return '<span class="tok-prompt-user">' + escapeHtml(m[1]) + '</span>' +
+                   '<span class="tok-prompt-path">' + escapeHtml(m[2]) + '</span>' +
+                   escapeHtml(m[3]) + highlight(m[4], "bash");
+               }).join("\n");
+               if (withCursor) html += '<span class="cursor"></span>';
+               cliTermEl.innerHTML = html;
+             }
+             if (reduceMotion){
+               renderCliDemo(cliDemo, false);
+             } else {
+               var cliTyper = null;
+               var cliRestartTimer = null;
+               function typeCliDemo(){
+                 clearInterval(cliTyper);
+                 clearTimeout(cliRestartTimer);
+                 var i = 0;
+                 renderCliDemo("", true);
+                 cliTyper = setInterval(function(){
+                   i += 2;
+                   var done = i >= cliDemo.length;
+                   renderCliDemo(cliDemo.slice(0, done ? cliDemo.length : i), true);
+                   if (done){
+                     clearInterval(cliTyper);
+                     cliRestartTimer = setTimeout(typeCliDemo, 3200);
+                   }
+                 }, 14);
+               }
+               typeCliDemo();
+             }
            }
          })();
       </script>

@@ -17,8 +17,8 @@ use Lytecache\LyteCache;
 
 $cache = new LyteCache(); // no path, no setup -- just works
 
-$cache->set('user:42', ['name' => 'Ada'], ttl: 300);
-$user = $cache->get('user:42'); // ['name' => 'Ada']
+$cache->set('user:42', ['name' => 'Samson'], ttl: 300);
+$user = $cache->get('user:42'); // ['name' => 'Samson']
 
 $hits = $cache->incr('hits'); // atomic, safe across PHP-FPM workers
 ```

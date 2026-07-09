@@ -22,6 +22,7 @@ This repository is a **monorepo** containing independent, same-spec implementati
 | [`lytecache-node/`](lytecache-node/) | ![Node.js](https://img.shields.io/badge/-Node.js-339933?style=flat-square&logo=node.js&logoColor=white) Node.js 18+ | `npm install lytecache` | [lytecache-node/README.md](lytecache-node/README.md) |
 | [`lytecache-go/`](lytecache-go/) | ![Go](https://img.shields.io/badge/-Go-00ADD8?style=flat-square&logo=go&logoColor=white) Go 1.25+ | `go get github.com/lytecache/lytecache-go` | [lytecache-go/README.md](lytecache-go/README.md) |
 | [`lytecache-php/`](lytecache-php/) | ![PHP](https://img.shields.io/badge/-PHP-777BB4?style=flat-square&logo=php&logoColor=white) PHP 8.2+ | `composer require lytecache/lytecache` | [lytecache-php/README.md](lytecache-php/README.md) |
+| [`lytecache-cli/`](lytecache-cli/) | ![Go](https://img.shields.io/badge/-Go-00ADD8?style=flat-square&logo=go&logoColor=white) CLI tool (built on lytecache-go) | **Coming soon** | [lytecache-cli/README.md](lytecache-cli/README.md) |
 
 More languages are expected to join this list over time — the storage spec below is the contract any implementation needs to satisfy. They share one on-disk [storage spec](#storage-spec--cross-language-compatibility): a cache file written by one is readable — and, for counters, atomically incrementable — by any of the others. Everything below is a quick tour; each package's own README is the full reference for that language.
 
@@ -38,8 +39,8 @@ More languages are expected to join this list over time — the storage spec bel
 from lytecache import LyteCache
 
 cache = LyteCache()            # no path, no setup
-cache.set("user:42", {"name": "Ada"}, ttl=300)
-cache.get("user:42")           # {"name": "Ada"}
+cache.set("user:42", {"name": "Samson"}, ttl=300)
+cache.get("user:42")           # {"name": "Samson"}
 cache.incr("hits")             # 1
 ```
 
@@ -51,8 +52,8 @@ import io.lytecache.LyteCache;
 import java.time.Duration;
 
 try (LyteCache cache = new LyteCache()) {
-    cache.set("user:42", "Ada", Duration.ofMinutes(5));
-    cache.getString("user:42");  // "Ada"
+    cache.set("user:42", "Samson", Duration.ofMinutes(5));
+    cache.getString("user:42");  // "Samson"
     cache.incr("hits");          // 1
 }
 ```
@@ -64,8 +65,8 @@ try (LyteCache cache = new LyteCache()) {
 import { LyteCache } from "lytecache";
 
 const cache = new LyteCache();  // no path, no setup
-cache.set("user:42", { name: "Ada" }, { ttl: 300 });
-cache.get("user:42");           // { name: "Ada" }
+cache.set("user:42", { name: "Samson" }, { ttl: 300 });
+cache.get("user:42");           // { name: "Samson" }
 cache.incr("hits");             // 1
 ```
 
@@ -76,10 +77,10 @@ cache.incr("hits");             // 1
 cache, _ := lytecache.New()  // no path, no setup
 defer cache.Close()
 
-cache.Set("user:42", map[string]any{"name": "Ada"},
+cache.Set("user:42", map[string]any{"name": "Samson"},
     lytecache.TTL(5*time.Minute))
 var user map[string]any
-cache.Get("user:42", &user)  // {"name": "Ada"}
+cache.Get("user:42", &user)  // {"name": "Samson"}
 cache.Incr("hits", 1)        // 1
 ```
 
@@ -90,8 +91,8 @@ cache.Incr("hits", 1)        // 1
 use Lytecache\LyteCache;
 
 $cache = new LyteCache();  // no path, no setup
-$cache->set("user:42", ["name" => "Ada"], ttl: 300);
-$cache->get("user:42");    // ["name" => "Ada"]
+$cache->set("user:42", ["name" => "Samson"], ttl: 300);
+$cache->get("user:42");    // ["name" => "Samson"]
 $cache->incr("hits");      // 1
 ```
 
@@ -256,9 +257,13 @@ go build ./... && go test -race ./...
 cd lytecache-php
 composer install
 composer stan && composer pint:test && composer test
+
+# CLI (coming soon -- depends on lytecache-go, not yet published)
+cd lytecache-cli
+go build ./... && go test -race ./...
 ```
 
-See [lytecache-python/README.md](lytecache-python/README.md), [lytecache-java/README.md](lytecache-java/README.md), [lytecache-node/README.md](lytecache-node/README.md), [lytecache-go/README.md](lytecache-go/README.md), and [lytecache-php/README.md](lytecache-php/README.md) for full configuration references, and each package's `CHANGELOG.md` for release notes.
+See [lytecache-python/README.md](lytecache-python/README.md), [lytecache-java/README.md](lytecache-java/README.md), [lytecache-node/README.md](lytecache-node/README.md), [lytecache-go/README.md](lytecache-go/README.md), [lytecache-php/README.md](lytecache-php/README.md), and [lytecache-cli/README.md](lytecache-cli/README.md) for full configuration references, and each package's `CHANGELOG.md` for release notes.
 
 ## License
 

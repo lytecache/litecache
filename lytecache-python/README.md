@@ -17,8 +17,8 @@ pip install lytecache
 from lytecache import LyteCache
 
 cache = LyteCache()                    # no path, no setup -- just works
-cache.set("user:42", {"name": "Ada"}, ttl=300)
-cache.get("user:42")                   # {"name": "Ada"}
+cache.set("user:42", {"name": "Samson"}, ttl=300)
+cache.get("user:42")                   # {"name": "Samson"}
 cache.incr("hits")                     # 1
 cache.get("missing", "default")        # "default"
 ```
@@ -114,10 +114,10 @@ class Person:
     age: int
     address: Address
 
-cache.set("p:1", Person("Ada", 30, Address("London", "E1")))
+cache.set("p:1", Person("Samson", 30, Address("London", "E1")))
 
-cache.get("p:1")               # {"name": "Ada", "age": 30, "address": {...}} -- plain dict
-cache.get("p:1", cls=Person)   # Person(name="Ada", age=30, address=Address(...)) -- typed
+cache.get("p:1")               # {"name": "Samson", "age": 30, "address": {...}} -- plain dict
+cache.get("p:1", cls=Person)   # Person(name="Samson", age=30, address=Address(...)) -- typed
 ```
 
 `tuple` values are JSON-encoded too and come back as `list` -- there's no
