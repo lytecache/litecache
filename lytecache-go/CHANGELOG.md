@@ -22,7 +22,7 @@ Initial release. Embedded, Redis-like caching backed by SQLite (via the pure-Go 
   demand, returning how many rows it removed for expiry vs. eviction. For callers who disabled the
   sweeper (`WithSweepInterval(0)`) and want to run a pass on their own schedule.
 - `Cache.Inspect(key)`: returns raw on-disk row metadata (`value_type` code, timestamps, size,
-  access count) without decoding the value -- for debugging/introspection tools, not ordinary
-  application code.
+  access count) without decoding the value. Meant for debugging and introspection tools, not
+  ordinary application code.
 
-The last two additions exist specifically so [lytecache-cli](https://github.com/lytecache/lytecache-cli) -- a separate repo/module, not part of this one -- can inspect and maintain a database file through the public API alone, with no duplicated cache logic. See that repo for the CLI itself.
+The last two additions exist specifically so [lytecache-cli](https://github.com/lytecache/lytecache-cli), a separate repo and module, not part of this one, can inspect and maintain a database file through the public API alone, with no duplicated cache logic. See that repo for the CLI itself.

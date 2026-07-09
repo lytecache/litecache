@@ -96,7 +96,7 @@
          abbr[title]{ text-decoration:underline dotted var(--text-dim); text-underline-offset:2px; cursor:help; }
          :not(pre) > code{
          background:var(--surface-2); border:1px solid var(--border); border-radius:4px;
-         padding:.1em .4em;
+         padding:.1em .4em; overflow-wrap:break-word;
          }
          .table-wrap{ overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); }
          .table-wrap table{ min-width:480px; }
@@ -1479,9 +1479,9 @@ def expensive(x):
                <h2>Command-line interface <span class="soon-tag">coming soon</span></h2>
                <div class="callout">
                   <p class="eyebrow">Not released yet</p>
-                  <p>The <code>lytecache</code> CLI is built and tested but not yet published -- this section documents what's shipping. Watch <a href="https://github.com/lytecache/lytecache-cli" target="_blank" rel="noopener">github.com/lytecache/lytecache-cli</a> for the first release.</p>
+                  <p>The <code>lytecache</code> CLI is built and tested, just not published yet. Watch <a href="https://github.com/lytecache/lytecache-cli" target="_blank" rel="noopener">github.com/lytecache/lytecache-cli</a> for the first release.</p>
                </div>
-               <p class="lead">Inspect and manipulate any lytecache database file from a shell -- like <code>redis-cli</code>, but for a file instead of a server. It's built entirely on <a href="https://github.com/lytecache/lytecache-go" target="_blank" rel="noopener">lytecache-go</a>'s public API, so it can read and write a file created by any of the five languages above.</p>
+               <p class="lead">Inspect and manipulate any lytecache database file from a shell, the way <code>redis-cli</code> does for a server. It's built entirely on <a href="https://github.com/lytecache/lytecache-go" target="_blank" rel="noopener">lytecache-go</a>'s public API, so it can read and write a file created by any of the five languages above.</p>
                <h3>Install</h3>
                <div class="snippet">
                   <div class="snippet-head">
@@ -1534,7 +1534,7 @@ lytecache (cache.db | ns: default)&gt; exit
 samson@lytecache:~$ </code></pre>
                   </div>
                </noscript>
-               <p>One-shot commands (script-friendly, shown above) and the interactive REPL share the exact same command tree -- the REPL just opens the database once for the whole session instead of reopening it per command. Command names are case-insensitive in the REPL, and Ctrl-C cancels the current line without leaving.</p>
+               <p>One-shot commands (script-friendly, shown above) and the interactive REPL share the exact same command tree. The REPL just opens the database once for the whole session instead of reopening it per command. Command names are case-insensitive there, and Ctrl-C cancels the current line without leaving.</p>
                <h3>Commands</h3>
                <div class="table-wrap">
                   <table>
@@ -1542,7 +1542,7 @@ samson@lytecache:~$ </code></pre>
                         <tr><th>Command</th><th>Description</th></tr>
                      </thead>
                      <tbody>
-                        <tr><td><code>get &lt;key&gt;</code></td><td>Print a value -- JSON pretty-printed by default, <code>--raw</code> for exact bytes</td></tr>
+                        <tr><td><code>get &lt;key&gt;</code></td><td>Print a value, JSON pretty-printed by default, or with <code>--raw</code> for exact bytes</td></tr>
                         <tr><td><code>set &lt;key&gt; [value]</code></td><td>Set a value; type is inferred unless <code>--type</code> forces it</td></tr>
                         <tr><td><code>del &lt;key&gt;...</code></td><td>Delete one or more keys; prints how many actually existed</td></tr>
                         <tr><td><code>exists &lt;key&gt;</code></td><td>Prints <code>1</code>/<code>0</code>; exit code matches</td></tr>
@@ -1553,7 +1553,7 @@ samson@lytecache:~$ </code></pre>
                         <tr><td><code>flush</code></td><td>Delete every key in the current namespace (prompts unless <code>--yes</code>)</td></tr>
                         <tr><td><code>maintain</code> / <code>vacuum</code></td><td>Run a maintenance pass / reclaim disk space</td></tr>
                         <tr><td><code>which</code></td><td>Print the resolved database path and whether it exists</td></tr>
-                        <tr><td><code>dump &lt;key&gt;</code></td><td>Raw row metadata -- the debugging view</td></tr>
+                        <tr><td><code>dump &lt;key&gt;</code></td><td>Raw row metadata, the view you reach for when debugging</td></tr>
                         <tr><td><code>watch [interval]</code></td><td>Redraw <code>stats</code> every interval seconds until Ctrl-C</td></tr>
                      </tbody>
                   </table>
@@ -1591,7 +1591,7 @@ samson@lytecache:~$ </code></pre>
   "timeout": 30
 }</code></pre>
                </div>
-               <p>No Python installation, no shared server, no export step -- just the same SQLite file on disk. Type codes 5 (Python pickle) and 6 (Java serialized) -- values the CLI can't decode -- render as <code>(non-portable value: python-pickle, N bytes)</code> rather than erroring or dumping garbage.</p>
+               <p>No Python installation, no shared server, no export step: just the same SQLite file on disk. The two type codes the CLI can't decode — 5 for Python pickle, 6 for Java serialization — render as <code>(non-portable value: python-pickle, N bytes)</code> instead of erroring out or dumping garbage.</p>
             </section>
          </main>
       </div>

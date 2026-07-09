@@ -1,6 +1,6 @@
 # lytecache
 
-Redis-like caching for Go with zero infrastructure -- no server, no CGO, just a file. `lytecache` gives you the familiar Redis API surface -- `Set`/`Get`, TTLs, atomic counters, eviction, distributed locks -- backed by a local SQLite file instead of a daemon, using a pure-Go SQLite driver so `go build`/`go install`/cross-compilation stay exactly as simple as they'd be without it.
+Redis-like caching for Go with zero infrastructure: no server, no CGO, just a file. `lytecache` gives you the familiar Redis API surface (`Set`/`Get`, TTLs, atomic counters, eviction, distributed locks), backed by a local SQLite file instead of a daemon. It uses a pure-Go SQLite driver, so `go build`, `go install`, and cross-compilation stay exactly as simple as they'd be without it.
 
 ## Install
 
@@ -48,7 +48,7 @@ That's it. The first call to `lytecache.New()` creates the database file (includ
 | `Flush()` | Clear the current namespace. |
 | `Stats()` | Hits, misses, hit rate, key count, size, evictions, path. |
 | `Vacuum()` / `Close()` | Reclaim disk space / shut down cleanly (idempotent). |
-| `lytecache.Memoize(cache, key, ttl, loader)` | Read-through cache for a computed value. Package-level generic function -- Go methods can't have type parameters. |
+| `lytecache.Memoize(cache, key, ttl, loader)` | Read-through cache for a computed value. It's a package-level generic function, since Go methods can't have type parameters. |
 | `Lock(name, timeout)` | Process-safe distributed lock; release via `lock.Release()`. |
 
 All errors that indicate a specific condition are sentinel errors you can test with `errors.Is`: `ErrCacheFull`, `ErrSerialization`, `ErrSchemaVersion`, `ErrLockTimeout`, `ErrNotNumeric`.
@@ -59,7 +59,7 @@ All errors that indicate a specific condition are sentinel errors you can test w
 
 - **No C toolchain required.** `go build`/`go install`/`go get` work the same everywhere, with no compiler, no `CGO_ENABLED=1`, and no platform-specific build flags.
 - **Cross-compilation stays trivial.** Building a Linux binary from macOS (or any other combination) just works, exactly like any other pure-Go dependency.
-- **It fits the zero-friction brand.** The whole point of `lytecache` is "no infrastructure" -- that shouldn't stop at "no server" and quietly require a working C build environment.
+- **It fits the zero-friction brand.** The whole point of `lytecache` is "no infrastructure," and that shouldn't quietly stop at "no server" while still requiring a working C build environment.
 
 ## When to use lytecache
 
@@ -71,9 +71,9 @@ All errors that indicate a specific condition are sentinel errors you can test w
 - Mixed-language systems where a Go process needs to share a cache file with a Python, Java, or Node.js one.
 
 **Not a good fit:**
-- A cache shared live across multiple servers/hosts -- SQLite is a local file, not a network service. Use Redis/Memcached.
-- Heavy concurrent write throughput from many processes -- SQLite's single-writer model will serialize writes and become a bottleneck.
-- Pub/sub, streams, or other Redis data structures beyond key-value + counters -- lytecache intentionally stays small.
+- A cache shared live across multiple servers/hosts. SQLite is a local file, not a network service; use Redis/Memcached instead.
+- Heavy concurrent write throughput from many processes. SQLite's single-writer model will serialize writes and become a bottleneck.
+- Pub/sub, streams, or other Redis data structures beyond key-value and counters. lytecache stays small on purpose.
 
 ## Where is my data?
 
@@ -85,7 +85,7 @@ By default, `lytecache.New()` stores its file at:
 
 resolved via [`os.UserCacheDir`](https://pkg.go.dev/os#UserCacheDir), which already implements the XDG Base Directory spec on Linux, `~/Library/Caches` on macOS, and `%LocalAppData%` on Windows.
 
-`<project-id>` is the first 12 hex characters of the SHA-256 hash of your current working directory's resolved, absolute path -- identical to the Python, Java, and Node.js implementations' derivation, so every project gets its own file automatically, and a Go process and a Python/Java/Node.js process started from the same directory share one cache.
+`<project-id>` is the first 12 hex characters of the SHA-256 hash of your current working directory's resolved, absolute path. That derivation is identical across the Python, Java, and Node.js implementations too, so every project gets its own file automatically, and a Go process started from the same directory as a Python, Java, or Node.js one ends up sharing its cache.
 
 ```go
 lytecache.DefaultPath() // (string, error) -- the resolved default location
@@ -125,7 +125,7 @@ See [SPEC.md](SPEC.md) for the on-disk schema, type codes, and full cross-langua
 
 ## CLI
 
-Looking for a command-line tool to inspect and manipulate lytecache database files from a shell (like `redis-cli`, but for a file)? See [lytecache-cli](https://github.com/lytecache/lytecache-cli) -- a separate repo/module that depends on this library's public API rather than living inside it, so this module stays a pure library with no CLI-only dependencies (`cobra`, `readline`) pulled into consumers who only want `import "github.com/lytecache/lytecache-go"`.
+Looking for a command-line tool to inspect and manipulate lytecache database files from a shell (like `redis-cli`, but for a file)? See [lytecache-cli](https://github.com/lytecache/lytecache-cli), a separate repo and module that depends on this library's public API rather than living inside it. That keeps this module a pure library, so consumers who only want `import "github.com/lytecache/lytecache-go"` never pull in CLI-only dependencies like `cobra` and `readline`.
 
 ## License
 
