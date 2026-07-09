@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	lytecache "github.com/YOURUSERNAME/lytecache-go"
+	lytecache "github.com/lytecache/lytecache-go"
 )
 
 func TestTTLNoExpiryByDefault(t *testing.T) {

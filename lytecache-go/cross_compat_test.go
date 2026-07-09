@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	lytecache "github.com/YOURUSERNAME/lytecache-go"
+	lytecache "github.com/lytecache/lytecache-go"
 )
 
 // TestCrossCompatibilityRawRows inserts rows via raw SQL exactly as SPEC.md

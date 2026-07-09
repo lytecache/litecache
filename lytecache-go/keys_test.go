@@ -5,7 +5,7 @@ import (
 	"sort"
 	"testing"
 
-	lytecache "github.com/YOURUSERNAME/lytecache-go"
+	lytecache "github.com/lytecache/lytecache-go"
 )
 
 func TestKeysGlobPattern(t *testing.T) {

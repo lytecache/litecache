@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"time"
 
-	lytecache "github.com/YOURUSERNAME/lytecache-go"
+	lytecache "github.com/lytecache/lytecache-go"
 )
 
 // exampleDBPath gives each example (other than the zero-config one below)

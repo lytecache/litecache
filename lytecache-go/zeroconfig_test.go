@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	lytecache "github.com/YOURUSERNAME/lytecache-go"
+	lytecache "github.com/lytecache/lytecache-go"
 )
 
 // patchCacheDir redirects os.UserCacheDir to a temp directory for the

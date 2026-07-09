@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	lytecache "github.com/YOURUSERNAME/lytecache-go"
+	lytecache "github.com/lytecache/lytecache-go"
 )
 
 // TestHelperProcess is not itself a real test: it's re-exec'd as a child

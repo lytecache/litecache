@@ -5,13 +5,13 @@ Redis-like caching for Go with zero infrastructure -- no server, no CGO, just a 
 ## Install
 
 ```bash
-go get github.com/YOURUSERNAME/lytecache-go
+go get github.com/lytecache/lytecache-go
 ```
 
 ## Quickstart
 
 ```go
-import "github.com/YOURUSERNAME/lytecache-go"
+import "github.com/lytecache/lytecache-go"
 
 cache, err := lytecache.New() // no path, no setup -- just works
 defer cache.Close()
@@ -121,7 +121,7 @@ cache, err := lytecache.New(
 - **Concurrency**: a `*Cache` is safe for concurrent use by multiple goroutines, like `*http.Client`, and safe for concurrent use by multiple OS processes sharing one file.
 - **Not yet included** (see `SPEC.md` and the package doc for the full list of deliberate exclusions): networking, pub/sub, clustering, `context.Context` plumbing on every method. These are `v0.2`-or-later considerations, not oversights.
 
-See [SPEC.md](SPEC.md) for the on-disk schema, type codes, and full cross-language semantics, and the package documentation on [pkg.go.dev](https://pkg.go.dev/github.com/YOURUSERNAME/lytecache-go) for runnable examples of every major feature.
+See [SPEC.md](SPEC.md) for the on-disk schema, type codes, and full cross-language semantics, and the package documentation on [pkg.go.dev](https://pkg.go.dev/github.com/lytecache/lytecache-go) for runnable examples of every major feature.
 
 ## License
 

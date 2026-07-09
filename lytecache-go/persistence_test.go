@@ -3,7 +3,7 @@ package lytecache_test
 import (
 	"testing"
 
-	lytecache "github.com/YOURUSERNAME/lytecache-go"
+	lytecache "github.com/lytecache/lytecache-go"
 )
 
 func TestPersistenceAcrossReopen(t *testing.T) {

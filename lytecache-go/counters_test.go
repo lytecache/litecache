@@ -5,7 +5,7 @@ import (
 	"math"
 	"testing"
 
-	lytecache "github.com/YOURUSERNAME/lytecache-go"
+	lytecache "github.com/lytecache/lytecache-go"
 )
 
 func TestIncrStartsMissingKeysAtZero(t *testing.T) {

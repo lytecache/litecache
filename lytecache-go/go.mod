@@ -1,4 +1,4 @@
-module github.com/YOURUSERNAME/lytecache-go
+module github.com/lytecache/lytecache-go
 
 go 1.25.0
 

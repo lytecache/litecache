@@ -2,9 +2,9 @@
 
 All notable changes to this project are documented in this file.
 
-## [0.1.0] - Unreleased
+## [0.2.0] - 2026-07-09
 
-Initial release. Embedded, Redis-like caching backed by SQLite (via the pure-Go `modernc.org/sqlite` driver), matching the storage format and semantics of the Python, Java, and Node.js implementations in this repository:
+Initial release. Embedded, Redis-like caching backed by SQLite (via the pure-Go `modernc.org/sqlite` driver), matching the storage format and semantics of the Python, Java, Node.js, and PHP implementations in this repository:
 
 - Zero-config `lytecache.New()`, with the same default-path derivation as Python/Java/Node.js.
 - `Set`/`Get`/`Delete`/`Exists`/`Add`/`Replace`/`GetSet`/`SetMany`/`GetMany`, with typed `GetBytes`/`GetString`/`GetInt64`/`GetFloat64` convenience wrappers.

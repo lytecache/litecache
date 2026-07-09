@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	lytecache "github.com/YOURUSERNAME/lytecache-go"
+	lytecache "github.com/lytecache/lytecache-go"
 )
 
 // newTestCache opens a Cache backed by a fresh temp-dir file, closing it

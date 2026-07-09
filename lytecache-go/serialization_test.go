@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	lytecache "github.com/YOURUSERNAME/lytecache-go"
+	lytecache "github.com/lytecache/lytecache-go"
 )
 
 // rawStoredValue peeks at the literal stored bytes for key via a second,

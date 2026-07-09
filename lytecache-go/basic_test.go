@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	lytecache "github.com/YOURUSERNAME/lytecache-go"
+	lytecache "github.com/lytecache/lytecache-go"
 )
 
 func TestSetGetString(t *testing.T) {
