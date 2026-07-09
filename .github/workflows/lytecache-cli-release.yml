@@ -1,0 +1,100 @@
+name: Release lytecache-cli
+
+# lytecache-cli is distributed as a real standalone repo
+# (github.com/lytecache/lytecache-cli) with prebuilt binaries via
+# GoReleaser -- go install, Homebrew, Scoop, and winget all resolve against
+# that repo directly, not this monorepo. This workflow: splits lytecache-cli/
+# out to that repo (same git-subtree-split approach as split-php.yml), drops
+# the monorepo-only local `replace` directive in go.mod (see the comment on
+# it there) now that a real lytecache-go release exists to depend on for
+# real, commits that fix, then runs GoReleaser from within it.
+#
+# Ordering dependency: lytecache-go must already have a tagged release
+# satisfying lytecache-cli/go.mod's `require` version before this workflow
+# can succeed -- dropping the replace directive requires actually resolving
+# that version from the Go module proxy. See RELEASING.md.
+
+on:
+  push:
+    tags:
+      # Distinct from every other component's tag prefix, matching the
+      # lytecache-go/v*.*.* convention -- see the comment on that pattern in
+      # go-release.yml.
+      - "lytecache-cli/v*.*.*"
+
+jobs:
+  split-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history required for an accurate subtree split
+          # actions/checkout otherwise persists the ambient GITHUB_TOKEN as a
+          # credential for all of github.com, which would outrank the
+          # CLI_SPLIT_REPO_TOKEN used below when pushing to a different repo
+          # -- see the identical note in split-php.yml.
+          persist-credentials: false
+
+      - name: Determine the standalone repo's tag (strip the lytecache-cli/ prefix)
+        id: version
+        run: |
+          FULL_TAG="${GITHUB_REF#refs/tags/}"
+          echo "tag=${FULL_TAG#lytecache-cli/}" >> "$GITHUB_OUTPUT"
+
+      - name: Split lytecache-cli/ out into its own branch
+        run: git subtree split --prefix=lytecache-cli -b split-branch
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+
+      - name: Drop the monorepo-only local replace directive
+        run: |
+          git worktree add ../split-checkout split-branch
+          cd ../split-checkout
+          go mod edit -dropreplace=github.com/lytecache/lytecache-go
+          go mod tidy
+          git -c user.name="goreleaserbot" -c user.email="goreleaserbot@users.noreply.github.com" \
+            commit -am "Drop monorepo-only replace directive for standalone release"
+
+      - name: Push the split history and stripped tag to the standalone repo
+        env:
+          CLI_SPLIT_REPO_TOKEN: ${{ secrets.CLI_SPLIT_REPO_TOKEN }}
+        run: |
+          git remote add split "https://x-access-token:${CLI_SPLIT_REPO_TOKEN}@github.com/lytecache/lytecache-cli.git"
+          git push split split-branch:refs/heads/main --force
+          git push split split-branch:refs/tags/${{ steps.version.outputs.tag }} --force
+
+      - name: Check out the standalone repo at the new tag
+        uses: actions/checkout@v4
+        with:
+          repository: lytecache/lytecache-cli
+          ref: ${{ steps.version.outputs.tag }}
+          token: ${{ secrets.CLI_SPLIT_REPO_TOKEN }}
+          path: lytecache-cli-standalone
+          fetch-depth: 0 # GoReleaser needs the previous tag to build a changelog/diff range
+
+      - name: go test -race (sanity check against the standalone repo, with the real dependency)
+        working-directory: lytecache-cli-standalone
+        run: go test -race ./...
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: "~> v2"
+          args: release --clean
+          workdir: lytecache-cli-standalone
+        env:
+          # Creates the GitHub release (and uploads all archives/packages/
+          # checksums/winget manifest as assets) on lytecache/lytecache-cli --
+          # a different repo than this workflow runs in, so it must be this
+          # scoped token, not the ambient GITHUB_TOKEN.
+          GITHUB_TOKEN: ${{ secrets.CLI_SPLIT_REPO_TOKEN }}
+          # Each tap/bucket repo gets its own narrowly-scoped fine-grained
+          # PAT, matching this repo's established one-token-per-target-repo
+          # pattern (see split-php.yml's SPLIT_REPO_TOKEN).
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          SCOOP_BUCKET_TOKEN: ${{ secrets.SCOOP_BUCKET_TOKEN }}

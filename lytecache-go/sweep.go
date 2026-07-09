@@ -41,6 +41,31 @@ func (c *Cache) sweepOnce() {
 	c.enforceCapacity()
 }
 
+// MaintainResult reports what one [Cache.Maintain] pass did.
+type MaintainResult struct {
+	ExpiredRemoved int64
+	Evicted        int64
+}
+
+// Maintain runs one maintenance pass immediately -- the same work the
+// background sweeper does automatically every WithSweepInterval (flushing
+// buffered LRU bookkeeping, removing expired rows, and enforcing
+// WithMaxKeys/WithMaxBytes via the configured eviction policy) -- and
+// reports how many rows it removed for each reason.
+//
+// This is for callers who disabled the sweeper (WithSweepInterval(0)) and
+// want to run a pass on their own schedule (a cron job, the lytecache CLI's
+// `maintain` command, etc.); most programs never need to call it directly.
+func (c *Cache) Maintain() (MaintainResult, error) {
+	expiredBefore := c.expiredRemoved.Load()
+	evictedBefore := c.evictions.Load()
+	c.sweepOnce()
+	return MaintainResult{
+		ExpiredRemoved: c.expiredRemoved.Load() - expiredBefore,
+		Evicted:        c.evictions.Load() - evictedBefore,
+	}, nil
+}
+
 func (c *Cache) removeExpiredBatch() {
 	now := nowMillis()
 	for {

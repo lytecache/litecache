@@ -123,6 +123,10 @@ cache, err := lytecache.New(
 
 See [SPEC.md](SPEC.md) for the on-disk schema, type codes, and full cross-language semantics, and the package documentation on [pkg.go.dev](https://pkg.go.dev/github.com/lytecache/lytecache-go) for runnable examples of every major feature.
 
+## CLI
+
+Looking for a command-line tool to inspect and manipulate lytecache database files from a shell (like `redis-cli`, but for a file)? See [lytecache-cli](https://github.com/lytecache/lytecache-cli) -- a separate repo/module that depends on this library's public API rather than living inside it, so this module stays a pure library with no CLI-only dependencies (`cobra`, `readline`) pulled into consumers who only want `import "github.com/lytecache/lytecache-go"`.
+
 ## License
 
 Apache License 2.0. See [LICENSE](LICENSE).

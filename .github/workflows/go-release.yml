@@ -1,0 +1,91 @@
+name: Release Go library
+
+# lytecache-go is a pure Go library (no CLI, no binaries -- see
+# lytecache-cli-release.yml for that) distributed as a real standalone repo
+# (github.com/lytecache/lytecache-go), since Go modules resolve by import
+# path against a real repository, not a monorepo subdirectory. A library
+# needs no build/publish step beyond that: `go get`/`go install` compile
+# straight from source at the tagged commit, so this workflow just splits
+# lytecache-go/ out (same git-subtree-split approach as split-php.yml, for
+# the same reason -- see the comment there) and pushes the matching tag.
+
+on:
+  push:
+    tags:
+      # Distinct from every other component's tag prefix (python-v*, java-v*,
+      # node-v*, the bare v*.*.* reserved for PHP/Packagist, lytecache-cli/v*
+      # for the CLI -- see release.yml, split-php.yml, and
+      # lytecache-cli-release.yml) and matching this session's established
+      # convention for a Go module living in a monorepo subdirectory:
+      # <subdir>/vX.Y.Z. The "lytecache-go/" prefix is stripped before this
+      # becomes the tag on the standalone repo (see the "Push" step below),
+      # which needs a plain vX.Y.Z tag for go install/pkg.go.dev to resolve.
+      - "lytecache-go/v*.*.*"
+
+jobs:
+  split-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history required for an accurate subtree split
+          # actions/checkout otherwise persists the ambient GITHUB_TOKEN as a
+          # credential for all of github.com, which would outrank the
+          # GO_SPLIT_REPO_TOKEN used below when pushing to a different repo
+          # -- see the identical note in split-php.yml.
+          persist-credentials: false
+
+      - name: Determine the standalone repo's tag (strip the lytecache-go/ prefix)
+        id: version
+        run: |
+          FULL_TAG="${GITHUB_REF#refs/tags/}"
+          echo "tag=${FULL_TAG#lytecache-go/}" >> "$GITHUB_OUTPUT"
+
+      - name: Split lytecache-go/ out into its own branch
+        run: git subtree split --prefix=lytecache-go -b split-branch
+
+      - name: Push the split history and stripped tag to the standalone repo
+        env:
+          GO_SPLIT_REPO_TOKEN: ${{ secrets.GO_SPLIT_REPO_TOKEN }}
+        run: |
+          git remote add split "https://x-access-token:${GO_SPLIT_REPO_TOKEN}@github.com/lytecache/lytecache-go.git"
+          git push split split-branch:refs/heads/main --force
+          git push split split-branch:refs/tags/${{ steps.version.outputs.tag }} --force
+
+      - name: Check out the standalone repo at the new tag
+        uses: actions/checkout@v4
+        with:
+          repository: lytecache/lytecache-go
+          ref: ${{ steps.version.outputs.tag }}
+          token: ${{ secrets.GO_SPLIT_REPO_TOKEN }}
+          path: lytecache-go-standalone
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+
+      - name: go test -race (sanity check against the standalone repo, not just the monorepo copy)
+        working-directory: lytecache-go-standalone
+        run: go test -race ./...
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          repository: lytecache/lytecache-go
+          tag_name: ${{ steps.version.outputs.tag }}
+          token: ${{ secrets.GO_SPLIT_REPO_TOKEN }}
+          body: |
+            # lytecache-go ${{ steps.version.outputs.tag }}
+
+            See [README.md](https://github.com/lytecache/lytecache-go/blob/${{ steps.version.outputs.tag }}/README.md) and
+            [SPEC.md](https://github.com/lytecache/lytecache-go/blob/${{ steps.version.outputs.tag }}/SPEC.md).
+
+            ```bash
+            go get github.com/lytecache/lytecache-go@${{ steps.version.outputs.tag }}
+            ```
+
+            Looking for the `lytecache` command-line tool? See
+            [lytecache-cli](https://github.com/lytecache/lytecache-cli) -- a separate repo/release.
